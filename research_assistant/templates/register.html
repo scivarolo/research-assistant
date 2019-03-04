@@ -1,0 +1,25 @@
+{% extends "index.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <h1>Register a new Research Assistant Account</h1>
+
+  {% if registered %}
+    <strong>Thank you for registering!</strong>
+    <a href="{% url 'research_assistant:index' %}">Return to the homepage.</a><br />
+    {% else %}
+    <strong>Register here!</strong><br />
+
+    <form id="user_form" method="post" action="{% url 'research_assistant:register' %}"
+            enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        {{ user_form|crispy }}
+
+        <!-- Provide a button to click to submit the form. -->
+        <input class="btn btn-primary" type="submit" name="submit" value="Register" />
+    </form>
+  {% endif %}
+
+{% endblock content %}

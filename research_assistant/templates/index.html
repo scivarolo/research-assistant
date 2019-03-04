@@ -1,0 +1,75 @@
+{% load staticfiles %}
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>{% block title %}Research Assistant{% endblock title %}</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <style>
+      html,body{
+        height: 100%;
+      }
+      body{
+        display:flex;
+        flex-direction: column;
+      }
+      .content{
+        flex: 1 0 auto;
+      }
+      .footer{
+        flex-shrink: 0;
+      }
+    </style>
+
+
+  </head>
+  <body>
+    <div class="content">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-5">
+      <a class="navbar-brand" href="{% url 'research_assistant:index' %}">Research Assistant</a>
+    </nav>
+    <div class="container body-content pb-5">
+    {% block content %}
+
+      <h1>Welcome to Research Assistant!</h1>
+      {% if user.is_authenticated %}
+      <h1>Research Assistant says... hello {{ user.username }}!</h1>
+      <a href="{% url 'research_assistant:logout' %}">Logout</a>
+      {% else %}
+      <h1>Hey Gurl</h1>
+
+      <div class="mt-4">
+        <a class="btn btn-primary mr-2" href="{% url 'research_assistant:register' %}">Register</a>
+        <a class="btn btn-primary" href="{% url 'research_assistant:login' %}">Login</a>
+      </div>
+      {% endif %}
+
+    {% endblock content %}
+    </div>
+  </div>
+
+    <footer class="pt-4 mt-md-5 py-md-5 border-top bg-light footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-md-4">
+            <h5><a class="" href="{% url 'research_assistant:index' %}">Research Assistant</a></h5>
+            {% if user.is_authenticated %}
+              <p><a class="" href="{% url 'research_assistant:logout' %}">Log Out</a></p>
+            {% else %}
+              <p><a class="" href="{% url 'research_assistant:login' %}">Log In</a></p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    {% block javascript %}{% endblock %}
+
+  </body>
+</html>
