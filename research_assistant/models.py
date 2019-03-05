@@ -19,22 +19,35 @@ class Paper(models.Model):
     lists = models.ManyToManyField("List")
     authors = models.ManyToManyField("Author")
 
+    def __str__(self):
+        return f"{self.title}"
+
 
 class Tag(models.Model):
     name = models.CharField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"{self.name}"
 
 class List(models.Model):
     name = models.CharField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.name}"
 
 
 class Author(models.Model):
     name = models.CharField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"{self.name}"
 
 class Journal(models.Model):
     name = models.CharField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.name}"
