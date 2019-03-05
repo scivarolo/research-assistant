@@ -26,7 +26,6 @@ def register_user(request):
 
             registered = True
 
-        print("Successfully registered")
         return login_user(request)
 
     elif request.method == "GET":
@@ -42,11 +41,9 @@ def login_user(request):
     Method arguments:
         request -- The full HTTP request object
     """
-    print("we loggin in")
     context = {"next": request.GET.get("next", "/")}
 
     if request.method == "POST":
-        print(request.POST)
         username = request.POST["username"]
         password = request.POST["password"]
         authenticated_user = authenticate(username=username, password=password)
@@ -56,7 +53,6 @@ def login_user(request):
             if request.POST.get("next") == "/":
                 return HttpResponseRedirect("/")
             else:
-                print("We in this")
                 return HttpResponseRedirect(request.POST.get("next", "/"))
 
         else:
