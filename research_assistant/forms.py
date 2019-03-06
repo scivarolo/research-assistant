@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
-from django_select2.forms import Select2TagWidget
 
+from django_select2.forms import Select2TagWidget, Select2Widget, Select2MultipleWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
@@ -22,9 +22,19 @@ class AddPaperForm(forms.ModelForm):
         model = Paper
         fields = ("title", "source_url", "file_url", "date_published", "journal", "tags", "lists", "authors")
         widgets = {
-            "tags": Select2TagWidget,
-            "lists": Select2TagWidget,
-            "authors": Select2TagWidget(attrs={"data-token-separators": '[","]'}),
+            "journal": Select2Widget(attrs={"data-tags": "true"}),
+            "tags": Select2MultipleWidget(attrs={
+                "data-tags": "true",
+                "data-token-separators": "[',']",
+            }),
+            "lists": Select2MultipleWidget(attrs = {
+                "data-tags": "true",
+                "data-token-separators": "[',']",
+            }),
+            "authors": Select2MultipleWidget(attrs={
+                "data-tags": "true",
+                "data-token-separators": '[","]',
+            }),
             "date_published": forms.DateInput(attrs={"type": "date"})
         }
 
