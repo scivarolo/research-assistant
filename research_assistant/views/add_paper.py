@@ -44,8 +44,13 @@ def add_paper(request):
         source_url = form_data["source_url"]
         file_url = uploaded_file_url
         date_published = form_data["date_published"]
-        journal = Journal.objects.get(pk=form_data["journal"])
         is_read = True if form_data["is_read"] == "on" else False
+
+        # See if journal exists in db or is new.
+        try:
+            journal = Journal.objects.get(pk=form_data["journal"])
+        except:
+            journal = Journal.objects.create(name=form_data["journal"], user=request.user)
 
         # Create Paper Object
         paper = Paper.objects.create(
