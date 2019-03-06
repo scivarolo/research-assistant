@@ -1,9 +1,12 @@
+import os
+
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.shortcuts import reverse
 from django.core.files.storage import FileSystemStorage
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 from research_assistant.models import Paper, Journal, Tag, List, Author
 from research_assistant.forms import AddPaperForm
@@ -12,6 +15,7 @@ from research_assistant.forms import AddPaperForm
 def add_paper(request):
     """ Handles displaying the Add Paper form and saving a paper to the database. """
 
+    # Load the form
     if request.method == "GET":
         paper_form = AddPaperForm(request.user)
         template_name = "paper/add.html"
@@ -21,13 +25,24 @@ def add_paper(request):
         }
         return render(request, template_name, context)
 
+    # Save the form data
     elif request.method == "POST":
         form_data = request.POST
         paper_form = AddPaperForm(request.user, form_data)
 
+        # save the uploaded PDF to the user's media directory
+        uploaded_file_url = ""
+        if "file_url" in request.FILES:
+            directory = os.path.join(settings.MEDIA_ROOT, str(request.user.id))
+            url = settings.MEDIA_URL + str(request.user.id)
+            file = request.FILES["file_url"]
+            fs = FileSystemStorage(directory, base_url=url)
+            uploaded_file = fs.save(file.name, file)
+            uploaded_file_url = fs.url(uploaded_file)
+
         title = form_data["title"]
         source_url = form_data["source_url"]
-        file_url = form_data["file_url"]
+        file_url = uploaded_file_url
         date_published = form_data["date_published"]
         journal = Journal.objects.get(pk=form_data["journal"])
         paper = Paper.objects.create(
