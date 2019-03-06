@@ -18,9 +18,10 @@ class UserForm(forms.ModelForm):
 class AddPaperForm(forms.ModelForm):
     """ Form for adding a new paper at papers/add/ """
 
+    is_read = forms.BooleanField(initial=False, required=False, label="Mark as read")
     class Meta:
         model = Paper
-        fields = ("title", "source_url", "file_url", "date_published", "journal", "tags", "lists", "authors")
+        fields = ("title", "source_url", "file_url", "date_published", "journal", "tags", "lists", "authors", "is_read")
         widgets = {
             "journal": Select2Widget(attrs={"data-tags": "true"}),
             "tags": Select2MultipleWidget(attrs={

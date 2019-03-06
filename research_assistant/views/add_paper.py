@@ -45,6 +45,9 @@ def add_paper(request):
         file_url = uploaded_file_url
         date_published = form_data["date_published"]
         journal = Journal.objects.get(pk=form_data["journal"])
+        is_read = True if form_data["is_read"] == "on" else False
+
+        # Create Paper Object
         paper = Paper.objects.create(
             user=request.user,
             title=title,
@@ -52,6 +55,7 @@ def add_paper(request):
             file_url=file_url,
             date_published=date_published,
             journal=journal,
+            is_read=is_read
         )
 
         # Loop through submitted tags and add existing, or create a new one

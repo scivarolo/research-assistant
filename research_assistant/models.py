@@ -18,6 +18,7 @@ class Paper(models.Model):
     tags = models.ManyToManyField("Tag", blank=True)
     lists = models.ManyToManyField("List", blank=True)
     authors = models.ManyToManyField("Author", blank=True)
+    is_read = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.title}"
