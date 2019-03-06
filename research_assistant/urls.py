@@ -5,7 +5,5 @@ app_name = "research_assistant"
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("login", views.login_user, name="login"),
-    path("logout", views.logout_user, name="logout"),
-    path("register", views.register_user,  name="register")
+    path("papers/add/", views.add_paper, name="add_paper")
 ]
