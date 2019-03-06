@@ -4,6 +4,9 @@
 # production
 /build
 
+# media
+/media
+
 #other
 node_modules/
 dist/
