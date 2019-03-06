@@ -1,0 +1,36 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <div class="row">
+    <div class="col">
+      <h1>{{ paper.title }}</h1>
+      <h4><em>{{ paper.journal }}</em></h4>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <h5>Tags</h5>
+      <ul>
+      {% for tag in paper.tags.all %}
+        <li>{{ tag.name }}</li>
+      {% endfor %}
+      </ul>
+    </div>
+    <div class="col">
+      <h5>Lists</h5>
+      <ul>
+      {% for list in paper.lists.all %}
+        <li>{{ list.name }}</li>
+      {% endfor %}
+      </ul>
+    </div>
+    <div class="col">
+      <h5>Authors</h5>
+      <ul>
+      {% for author in paper.authors.all %}
+        <li>{{ author.name }}</li>
+      {% endfor %}
+      </ul>
+    </div>
+{% endblock content %}

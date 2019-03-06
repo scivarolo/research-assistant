@@ -1,0 +1,18 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col">
+    <h1>All Papers</h1>
+  </div>
+  <div class="col text-right">
+    <a class="btn btn-primary" href="{% url 'research_assistant:add_paper' %}">Add Paper</a>
+  </div>
+</div>
+<ul class="list-group">
+  {% for paper in papers %}
+    <a class="list-group-item list-group-item-action" href="{% url 'research_assistant:single_paper' paper.id %}">{{ paper.title }}</a>
+  {% endfor %}
+</ul>
+
+{% endblock content %}

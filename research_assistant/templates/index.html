@@ -24,33 +24,43 @@
         flex-shrink: 0;
       }
     </style>
-
+    {% block css %}
+    {% endblock css %}
 
   </head>
   <body>
     <div class="content">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-5">
-      <a class="navbar-brand" href="{% url 'research_assistant:index' %}">Research Assistant</a>
-    </nav>
-    <div class="container body-content pb-5">
-    {% block content %}
+      <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-5">
+        <a class="navbar-brand" href="{% url 'research_assistant:index' %}">Research Assistant</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_collapse_content" aria-controls="navbar_collapse_content" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar_collapse_content">
+          <ul class="navbar-nav ml-lg-auto">
+            <li class="nav-item {% if request.resolver_match.view_name == 'research_assistant:all_papers' %}active{% endif %}"><a href="{% url 'research_assistant:all_papers' %}" class="nav-link">Papers</a></li>
+          </ul>
+        </div>
+      </nav>
+      <div class="container body-content pb-5">
 
-      <h1>Welcome to Research Assistant!</h1>
-      {% if user.is_authenticated %}
-      <h1>Research Assistant says... hello {{ user.username }}!</h1>
-      <a href="{% url 'research_assistant:logout' %}">Logout</a>
-      {% else %}
-      <h1>Hey Gurl</h1>
+      {% block content %}
 
-      <div class="mt-4">
-        <a class="btn btn-primary mr-2" href="{% url 'research_assistant:register' %}">Register</a>
-        <a class="btn btn-primary" href="{% url 'research_assistant:login' %}">Login</a>
+        <h1>Welcome to Research Assistant!</h1>
+        {% if user.is_authenticated %}
+        <h1>Research Assistant says... hello {{ user.username }}!</h1>
+        <a href="{% url 'research_assistant:logout' %}">Logout</a>
+        {% else %}
+
+        <div class="mt-4">
+          <a class="btn btn-primary mr-2" href="{% url 'research_assistant:register' %}">Register</a>
+          <a class="btn btn-primary" href="{% url 'research_assistant:login' %}">Login</a>
+        </div>
+        {% endif %}
+
+      {% endblock content %}
+
       </div>
-      {% endif %}
-
-    {% endblock content %}
     </div>
-  </div>
 
     <footer class="pt-4 mt-md-5 py-md-5 border-top bg-light footer">
       <div class="container">
@@ -69,7 +79,7 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    {% block javascript %}{% endblock %}
+    {% block js %}{% endblock %}
 
   </body>
 </html>
