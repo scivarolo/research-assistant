@@ -190,3 +190,19 @@ def edit_paper(request, paper_id):
                 paper.lists.add(List.objects.create(name=list, user=request.user))
 
         return HttpResponseRedirect(reverse("research_assistant:single_paper", args=(paper.id,)))
+
+
+def delete_paper(request, paper_id):
+    if request.method == "GET":
+        paper = Paper.objects.get(pk=paper_id)
+        context = {
+            "paper": paper
+        }
+        template = "paper/delete.html"
+        return render(request, template, context)
+
+    elif request.method == "POST":
+        paper = Paper.objects.get(pk=paper_id)
+        paper.file_url.delete()
+        paper.delete()
+        return HttpResponseRedirect(reverse("research_assistant:all_papers"))
