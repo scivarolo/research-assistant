@@ -6,6 +6,9 @@
       <h1>{{ paper.title }}</h1>
       <h4><em>{{ paper.journal }}</em></h4>
     </div>
+    <div class="col text-right">
+      <a class="btn btn-primary" href="{% url 'research_assistant:edit_paper' paper.id %}">Edit</a>
+    </div>
   </div>
 
   <div class="row">
