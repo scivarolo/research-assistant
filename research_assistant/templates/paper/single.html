@@ -1,0 +1,45 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <div class="row">
+    <div class="col">
+      <h1>{{ paper.title }}</h1>
+      <h4><em>{{ paper.journal }}</em>, {{ paper.date_published }} {% if not is_read %}<span class="badge badge-danger badge-pill">Unread</span>{% endif %}</h4>
+    </div>
+    <div class="col text-right">
+      <a class="btn btn-primary" href="{% url 'research_assistant:edit_paper' paper.id %}">Edit</a>
+      <a class="btn btn-danger" href="{% url 'research_assistant:delete_paper' paper.id %}">Delete</a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col my-3">
+      {% if paper.file_url %}<a class="btn btn-primary" href="../media/{{paper.file_url}}">View Paper (PDF)</a>{% endif %}
+      {% if paper.source_url %}<a class="btn btn-primary" href="{{paper.source_url}}" target="_blank">Original Source</a>{% endif %}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <h5>Tags</h5>
+      <ul>
+      {% for tag in paper.tags.all %}
+        <li>{{ tag.name }}</li>
+      {% endfor %}
+      </ul>
+    </div>
+    <div class="col">
+      <h5>Lists</h5>
+      <ul>
+      {% for list in paper.lists.all %}
+        <li>{{ list.name }}</li>
+      {% endfor %}
+      </ul>
+    </div>
+    <div class="col">
+      <h5>Authors</h5>
+      <ul>
+      {% for author in paper.authors.all %}
+        <li>{{ author.name }}</li>
+      {% endfor %}
+      </ul>
+    </div>
+{% endblock content %}

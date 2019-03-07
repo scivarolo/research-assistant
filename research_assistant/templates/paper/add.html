@@ -1,0 +1,27 @@
+{% extends "index.html" %}
+{% load crispy_forms_tags %}
+
+{% block css %}
+  {{ paper_form.media.css }}
+{% endblock css %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col">
+      <h1>Add New Paper</h1>
+    </div>
+  </div>
+
+  <form id="add_paper_form" method="post" action="{% url 'research_assistant:add_paper' %}"
+            enctype="multipart/form-data">
+
+    {% csrf_token %}
+    {% crispy paper_form paper_form.helper %}
+
+  </form>
+{% endblock content %}
+
+{% block js %}
+  {{ paper_form.media.js }}
+{% endblock js %}

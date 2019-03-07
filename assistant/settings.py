@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "research_assistant",
     "crispy_forms",
+    "django_select2",
 ]
 
 MIDDLEWARE = [
@@ -127,3 +128,5 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 # Media Upload Settings
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+LOGIN_URL = "/login"
