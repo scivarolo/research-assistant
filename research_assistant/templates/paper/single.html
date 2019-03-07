@@ -4,7 +4,7 @@
   <div class="row">
     <div class="col">
       <h1>{{ paper.title }}</h1>
-      <h4><em>{{ paper.journal }}</em></h4>
+      <h4><em>{{ paper.journal }}</em>, {{ paper.date_published }} {% if not is_read %}<span class="badge badge-danger badge-pill">Unread</span>{% endif %}</h4>
     </div>
     <div class="col text-right">
       <a class="btn btn-primary" href="{% url 'research_assistant:edit_paper' paper.id %}">Edit</a>
