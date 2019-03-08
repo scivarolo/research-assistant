@@ -3,9 +3,10 @@
 
 # production
 /build
-
+local_settings.py
 # media
 /media
+
 
 #other
 node_modules/

@@ -5,7 +5,7 @@ from django_select2.forms import Select2TagWidget, Select2Widget, Select2Multipl
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
-from .models import Paper, Tag, List, Author
+from .models import Paper, Tag, List, Author, Note
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
@@ -46,3 +46,10 @@ class AddPaperForm(forms.ModelForm):
         self.fields['authors'].queryset = Author.objects.filter(user=user)
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Save Paper'))
+
+
+class PaperNoteForm(forms.ModelForm):
+
+    class Meta:
+        model = Note
+        fields = ("title", "content")
