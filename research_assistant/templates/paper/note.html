@@ -1,5 +1,7 @@
 {% extends 'index.html' %}
 {% load crispy_forms_tags %}
+{% load tz %}
+{% get_current_timezone as TIME_ZONE %}
 
 {% block js_head %}
   <script src="https://cloud.tinymce.com/5/tinymce.min.js?apiKey={{ tiny_api_key }}"></script>
@@ -9,20 +11,24 @@
 {% block content %}
   <div class="row">
     <div class="col">
-      <h1>Add a Note to {{ paper.title }}
+      <h1>Add a Note to {{ paper.title }}</h1>
     </div>
   </div>
 
   <div class="row">
+
     <div class="col">
-      <form id="add_note_form" method="post" action="{% url 'research_assistant:add_note' paper.id %}"
-            enctype="multipart/form-data">
+      {% if request.resolver_match.kwargs.note_id %}
+        <form id="edit_note_form" method="post" action="{% url 'research_assistant:edit_note' request.resolver_match.kwargs.paper_id request.resolver_match.kwargs.note_id %}" enctype="multipart/form-data">
+      {% else %}
+        <form id="add_note_form" method="post" action="{% url 'research_assistant:add_note' request.resolver_match.kwargs.paper_id %}" enctype="multipart/form-data">
+      {% endif %}
 
         {% csrf_token %}
         {{ note_form|crispy }}
 
         <button class="btn btn-primary" type="submit">Save Note</button>
-        <a class="btn btn-secondary" href="{% url 'research_assistant:single_paper' paper.id %}">Cancel</a>
+        <a class="btn btn-secondary" href="{% url 'research_assistant:single_paper' request.resolver_match.kwargs.paper_id %}">Cancel</a>
       </form>
     </div>
   </div>

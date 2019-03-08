@@ -13,5 +13,6 @@ urlpatterns = [
     path("papers/<int:paper_id>/edit/", views.edit_paper, name="edit_paper"),
     path("papers/<int:paper_id>/delete/", views.delete_paper, name="delete_paper"),
     path("papers/<int:paper_id>/note/add/", views.add_note, name="add_note"),
+    path("papers/<int:paper_id>/note/<int:note_id>/edit/", views.edit_note, name="edit_note"),
     path("papers/add/", views.add_paper, name="add_paper"),
 ]

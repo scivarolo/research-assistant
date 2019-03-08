@@ -29,7 +29,10 @@
             </div>
           </div>
           <hr />
-          <div>{{note.content|safe}}</div>
+          <div>
+            {{note.content|safe}}
+            <a class="btn btn-light btn-sm" href="{% url 'research_assistant:edit_note' paper.id note.id %}">Edit</a>
+          </div>
         </div>
       {% endfor %}
       <a class="btn btn-primary" href="{% url 'research_assistant:add_note' paper.id %}">New Note</a>
