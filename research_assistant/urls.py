@@ -12,5 +12,8 @@ urlpatterns = [
     path("papers/<int:paper_id>", views.single_paper, name="single_paper"),
     path("papers/<int:paper_id>/edit/", views.edit_paper, name="edit_paper"),
     path("papers/<int:paper_id>/delete/", views.delete_paper, name="delete_paper"),
+    path("papers/<int:paper_id>/notes/add/", views.add_note, name="add_note"),
+    path("papers/<int:paper_id>/notes/<int:note_id>/edit/", views.edit_note, name="edit_note"),
+    path("papers/<int:paper_id>/notes/<int:note_id>/delete/", views.delete_note, name="delete_note"),
     path("papers/add/", views.add_paper, name="add_paper"),
 ]

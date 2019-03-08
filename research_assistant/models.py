@@ -4,6 +4,8 @@ from django.db import models
 from django.utils import timezone
 from django.conf import settings
 
+from tinymce.models import HTMLField
+
 # Include user id as subfolder for media upload
 def upload_to(instance, filename):
     return str(instance.user.id) + "/" + filename
@@ -55,3 +57,17 @@ class Journal(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+
+
+class Note(models.Model):
+    """Note is always linked to a Paper"""
+
+    paper = models.ForeignKey("Paper", on_delete=models.CASCADE)
+    title = models.CharField(max_length=200, blank=True, null=True)
+    content = HTMLField()
+    date_created = models.DateTimeField(default=timezone.now)
+    date_modified = models.DateTimeField(default=timezone.now)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ("-date_modified",)

@@ -17,24 +17,40 @@
       {% if paper.source_url %}<a class="btn btn-primary" href="{{paper.source_url}}" target="_blank">Original Source</a>{% endif %}
     </div>
   </div>
-  <div class="row">
-    <div class="col">
+  <div class="row mt-4">
+    <div class="col-md-9 mb-4">
+      <h3>Notes</h3>
+      {% for note in paper.note_set.all %}
+        <div class="shadow-sm rounded-lg border px-4 pt-4 pb-2 mb-3">
+          <div class="d-flex">
+            <h5 class="m-0">{{note.title}}</h5>
+            <div class="ml-auto">
+              <h6 class="badge badge-primary">{{note.date_modified|timesince}} ago</h6>
+            </div>
+          </div>
+          <hr />
+          <div>
+            {{note.content|safe}}
+            <a class="btn btn-light btn-sm" href="{% url 'research_assistant:edit_note' paper.id note.id %}">Edit</a>
+            <a class="btn btn-light btn-sm" href="{% url 'research_assistant:delete_note' paper.id note.id %}">Delete</a>
+          </div>
+        </div>
+      {% endfor %}
+      <a class="btn btn-primary" href="{% url 'research_assistant:add_note' paper.id %}">New Note</a>
+    </div>
+    <div class="col-md-3">
       <h5>Tags</h5>
       <ul>
       {% for tag in paper.tags.all %}
         <li>{{ tag.name }}</li>
       {% endfor %}
       </ul>
-    </div>
-    <div class="col">
       <h5>Lists</h5>
       <ul>
       {% for list in paper.lists.all %}
         <li>{{ list.name }}</li>
       {% endfor %}
       </ul>
-    </div>
-    <div class="col">
       <h5>Authors</h5>
       <ul>
       {% for author in paper.authors.all %}
@@ -42,4 +58,5 @@
       {% endfor %}
       </ul>
     </div>
+  </div>
 {% endblock content %}
