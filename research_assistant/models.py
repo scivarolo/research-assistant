@@ -70,4 +70,4 @@ class Note(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ("-date_created",)
+        ordering = ("-date_modified",)
