@@ -22,6 +22,7 @@
         {{ note_form|crispy }}
 
         <button class="btn btn-primary" type="submit">Save Note</button>
+        <a class="btn btn-secondary" href="{% url 'research_assistant:single_paper' paper.id %}">Cancel</a>
       </form>
     </div>
   </div>
