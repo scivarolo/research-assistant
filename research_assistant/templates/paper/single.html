@@ -32,6 +32,7 @@
           <div>
             {{note.content|safe}}
             <a class="btn btn-light btn-sm" href="{% url 'research_assistant:edit_note' paper.id note.id %}">Edit</a>
+            <a class="btn btn-light btn-sm" href="{% url 'research_assistant:delete_note' paper.id note.id %}">Delete</a>
           </div>
         </div>
       {% endfor %}

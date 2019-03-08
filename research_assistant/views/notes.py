@@ -73,3 +73,20 @@ def edit_note(request, paper_id, note_id):
         note.save()
 
         return HttpResponseRedirect(reverse("research_assistant:single_paper", args=(paper_id,)))
+
+
+def delete_note(request, paper_id, note_id):
+
+    if request.method == "GET":
+        note = Note.objects.get(pk=note_id)
+        template = "paper/delete_note.html"
+        context = {
+            "note": note
+        }
+        return render(request, template, context)
+
+    elif request.method == "POST":
+        note = Note.objects.get(pk=note_id)
+        note.delete()
+
+        return HttpResponseRedirect(reverse("research_assistant:single_paper", args=(paper_id,)))
