@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load static %}
 
 <html lang="en">
   <head>
@@ -8,7 +8,8 @@
     <title>{% block title %}Research Assistant{% endblock title %}</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'research_assistant/style.css' %}">
     <style>
       html,body{
         height: 100%;
@@ -39,7 +40,8 @@
         </button>
         <div class="collapse navbar-collapse" id="navbar_collapse_content">
           <ul class="navbar-nav ml-lg-auto">
-            <li class="nav-item {% if request.resolver_match.view_name == 'research_assistant:all_papers' %}active{% endif %}"><a href="{% url 'research_assistant:all_papers' %}" class="nav-link">Papers</a></li>
+            <li class="nav-item {% if 'papers' in request.path %}active{% endif %}"><a href="{% url 'research_assistant:all_papers' %}" class="nav-link">Papers</a></li>
+            <li class="nav-item {% if 'lists' in request.path %}active{% endif %}"><a href="{% url 'research_assistant:all_lists' %}" class="nav-link">Lists</a></li>
           </ul>
         </div>
       </nav>

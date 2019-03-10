@@ -1,0 +1,12 @@
+{% extends 'index.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<form method="post">
+  {% csrf_token %}
+  {{ new_list_form|crispy}}
+  <input type="submit" class="btn btn-primary">
+  <a class="btn btn-secondary" href="{% url 'research_assistant:all_lists' %}">Cancel</a>
+</form>
+
+{% endblock content %}

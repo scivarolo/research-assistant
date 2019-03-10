@@ -4,7 +4,7 @@
   <div class="row">
     <div class="col">
       <h1>{{ paper.title }}</h1>
-      <h4><em>{{ paper.journal }}</em>, {{ paper.date_published }} {% if not is_read %}<span class="badge badge-danger badge-pill">Unread</span>{% endif %}</h4>
+      <h4><em>{{ paper.journal }}</em>, {{ paper.date_published }} {% if not paper.is_read %}<span class="badge badge-danger badge-pill">Unread</span>{% endif %}</h4>
     </div>
     <div class="col text-right">
       <a class="btn btn-primary" href="{% url 'research_assistant:edit_paper' paper.id %}">Edit</a>
@@ -39,24 +39,34 @@
       <a class="btn btn-primary" href="{% url 'research_assistant:add_note' paper.id %}">New Note</a>
     </div>
     <div class="col-md-3">
+
+      {% if paper.tags.all %}
       <h5>Tags</h5>
       <ul>
       {% for tag in paper.tags.all %}
         <li>{{ tag.name }}</li>
       {% endfor %}
       </ul>
+      {% endif %}
+
+      {% if paper.lists.all %}
       <h5>Lists</h5>
       <ul>
       {% for list in paper.lists.all %}
-        <li>{{ list.name }}</li>
+        <li><a href="{% url 'research_assistant:single_list' list.id %}">{{ list.name }}</a></li>
       {% endfor %}
       </ul>
+      {% endif %}
+
+      {% if paper.authors.all %}
       <h5>Authors</h5>
       <ul>
       {% for author in paper.authors.all %}
         <li>{{ author.name }}</li>
       {% endfor %}
       </ul>
+      {% endif %}
+
     </div>
   </div>
 {% endblock content %}

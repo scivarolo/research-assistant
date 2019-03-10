@@ -1,14 +1,18 @@
-import datetime
+"""
+Defines all models for research_assistant
+"""
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
-from django.conf import settings
 
 from tinymce.models import HTMLField
 
-# Include user id as subfolder for media upload
+
 def upload_to(instance, filename):
+    """Include user id as subfolder for media upload"""
     return str(instance.user.id) + "/" + filename
+
 
 class Paper(models.Model):
     """Defines a model for a research Paper."""
@@ -30,28 +34,43 @@ class Paper(models.Model):
 
 
 class Tag(models.Model):
+    """Defines the Tag model. Used to organize Papers and Ideas."""
+
     name = models.CharField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.name}"
 
+
 class List(models.Model):
+    """Defines the List model. Used to group Papers together."""
+
     name = models.CharField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    @property
+    def unread_count(self):
+        """Returns the number of unread papers in a list."""
+        return Paper.objects.filter(lists=self, is_read=False).count()
 
     def __str__(self):
         return f"{self.name}"
 
 
 class Author(models.Model):
+    """Defines the Author model. Used for Authors of Papers."""
+
     name = models.CharField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.name}"
 
+
 class Journal(models.Model):
+    """Defines the Journal model. Contains the source Journal information for Papers."""
+
     name = models.CharField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
