@@ -38,7 +38,7 @@ def add_paper(request):
         # See if journal exists in db or is new.
         try:
             journal = Journal.objects.get(pk=form_data["journal"])
-        except Journal.DoesNotExist:
+        except ValueError:
             journal = Journal.objects.create(
                 name=form_data["journal"], user=request.user
             )
