@@ -2,14 +2,13 @@
 Contains all of the forms used in research_assistant.
 """
 
-from django import forms
-from django.contrib.auth.models import User
-
-from django_select2.forms import Select2Widget, Select2MultipleWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from django import forms
+from django.contrib.auth.models import User
+from django_select2.forms import Select2MultipleWidget, Select2Widget
 
-from .models import Paper, Tag, List, Author, Note, Journal
+from .models import Author, Journal, List, Note, Paper, Tag
 
 
 class UserForm(forms.ModelForm):

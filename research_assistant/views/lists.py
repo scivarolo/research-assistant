@@ -1,11 +1,11 @@
 """ Contains all of the views pertaining to Lists """
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, reverse
 from django.http import HttpResponseRedirect
+from django.shortcuts import render, reverse
 
-from research_assistant.models import List
 from research_assistant.forms import ListForm
+from research_assistant.models import List
 
 
 @login_required

@@ -5,7 +5,6 @@ Defines all models for research_assistant
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
-
 from tinymce.models import HTMLField
 
 

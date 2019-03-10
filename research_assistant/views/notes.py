@@ -1,14 +1,20 @@
+"""
+Views that handle creating, editing, and deleting notes.
+"""
+
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
-from django.conf import settings
 from django.utils import timezone
 
-from research_assistant.models import Note, Paper
 from research_assistant.forms import PaperNoteForm
+from research_assistant.models import Note, Paper
+
 
 @login_required
 def add_note(request, paper_id):
+    """Handles displaying the add note form and saving the new note"""
 
     if request.method == "GET":
 
@@ -18,7 +24,7 @@ def add_note(request, paper_id):
         context = {
             "paper": paper,
             "note_form": note_form,
-            "tiny_api_key": settings.TINYMCE_API_KEY
+            "tiny_api_key": settings.TINYMCE_API_KEY,
         }
 
         return render(request, template, context)
@@ -33,16 +39,19 @@ def add_note(request, paper_id):
             title=title,
             content=content,
             paper=Paper.objects.get(pk=paper_id),
-            user=request.user
+            user=request.user,
         )
 
         note.save()
 
-        return HttpResponseRedirect(reverse("research_assistant:single_paper", args=(paper_id,)))
+        return HttpResponseRedirect(
+            reverse("research_assistant:single_paper", args=(paper_id,))
+        )
 
 
 @login_required
 def edit_note(request, paper_id, note_id):
+    """Handles displaying the edit form and saving the edited note."""
 
     if request.method == "GET":
 
@@ -54,7 +63,7 @@ def edit_note(request, paper_id, note_id):
             "paper": paper,
             "note": note,
             "note_form": note_form,
-            "tiny_api_key": settings.TINYMCE_API_KEY
+            "tiny_api_key": settings.TINYMCE_API_KEY,
         }
 
         return render(request, template, context)
@@ -72,21 +81,24 @@ def edit_note(request, paper_id, note_id):
         note.date_modified = timezone.now()
         note.save()
 
-        return HttpResponseRedirect(reverse("research_assistant:single_paper", args=(paper_id,)))
+        return HttpResponseRedirect(
+            reverse("research_assistant:single_paper", args=(paper_id,))
+        )
 
 
 def delete_note(request, paper_id, note_id):
+    """Displays a confirmation page and deletes after confirmation."""
 
     if request.method == "GET":
         note = Note.objects.get(pk=note_id)
         template = "paper/delete_note.html"
-        context = {
-            "note": note
-        }
+        context = {"note": note}
         return render(request, template, context)
 
     elif request.method == "POST":
         note = Note.objects.get(pk=note_id)
         note.delete()
 
-        return HttpResponseRedirect(reverse("research_assistant:single_paper", args=(paper_id,)))
+        return HttpResponseRedirect(
+            reverse("research_assistant:single_paper", args=(paper_id,))
+        )

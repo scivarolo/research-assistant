@@ -3,6 +3,7 @@ All url patterns for research_assistant.
 """
 
 from django.urls import path
+
 from . import views
 
 app_name = "research_assistant"
