@@ -135,5 +135,5 @@ LOGIN_URL = "/login"
 
 try:
     TINYMCE_API_KEY = local_settings.TINYMCE_API_KEY
-except:
+except ImportError:
     pass

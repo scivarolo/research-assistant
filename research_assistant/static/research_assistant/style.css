@@ -1,0 +1,18 @@
+.edit-button {
+  font-size: 1.25rem;
+  vertical-align: middle;
+}
+
+.hover-primary:hover,
+.hover-primary:focus,
+.hover-primary:active {
+  color: #007bff !important;
+}
+
+h1 .edit-button.hidden {
+  display: none;
+}
+
+h1:hover .edit-button.hidden {
+  display: inline-block;
+}

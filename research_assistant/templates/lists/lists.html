@@ -1,0 +1,23 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col">
+    <h1>My Lists</h1>
+  </div>
+  <div class="col text-right">
+    <a class="btn btn-primary" href="{% url 'research_assistant:new_list' %}">New List</a>
+  </div>
+</div>
+<ul class="list-group">
+  {% for list in lists %}
+    <a class="list-group-item list-group-item-action" href="{% url 'research_assistant:single_list' list.id %}">{{ list.name }}
+    <span class="badge badge-pill badge-primary">{{list.paper_set.all|length}} papers</span>
+    {% if list.unread_count > 0 %}
+    <span class="badge badge-pill badge-danger">{{list.unread_count}} unread</span>
+    {% endif %}
+    </a>
+  {% endfor %}
+</ul>
+
+{% endblock content %}

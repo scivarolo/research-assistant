@@ -1,15 +1,12 @@
-import os
+"""All views related to adding, editing, deleting Papers."""
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
-from django.shortcuts import reverse
-from django.core.files.storage import FileSystemStorage
-from django.core.exceptions import ValidationError
-from django.conf import settings
+from django.shortcuts import render, reverse
 
-from research_assistant.models import Paper, Journal, Tag, List, Author
 from research_assistant.forms import AddPaperForm
+from research_assistant.models import Author, Journal, List, Paper, Tag
+
 
 @login_required
 def add_paper(request):
@@ -19,10 +16,7 @@ def add_paper(request):
     if request.method == "GET":
         paper_form = AddPaperForm(request.user)
         template_name = "paper/add.html"
-        context = {
-            "paper_form": paper_form,
-            "file_error": False
-        }
+        context = {"paper_form": paper_form, "file_error": False}
         return render(request, template_name, context)
 
     # Save the form data
@@ -39,13 +33,15 @@ def add_paper(request):
         source_url = form_data["source_url"]
         file_url = file
         date_published = form_data["date_published"]
-        is_read = True if form_data["is_read"] == "on" else False
+        is_read = True if form_data.get("is_read") else False
 
         # See if journal exists in db or is new.
         try:
             journal = Journal.objects.get(pk=form_data["journal"])
-        except:
-            journal = Journal.objects.create(name=form_data["journal"], user=request.user)
+        except ValueError:
+            journal = Journal.objects.create(
+                name=form_data["journal"], user=request.user
+            )
 
         # Create Paper Object
         paper = Paper.objects.create(
@@ -55,7 +51,7 @@ def add_paper(request):
             file_url=file_url,
             date_published=date_published,
             journal=journal,
-            is_read=is_read
+            is_read=is_read,
         )
 
         # Loop through submitted tags and add existing, or create a new one
@@ -63,43 +59,42 @@ def add_paper(request):
         for tag in tags:
             try:
                 paper.tags.add(Tag.objects.get(pk=tag))
-            except:
+            except ValueError:
                 paper.tags.add(Tag.objects.create(name=tag, user=request.user))
 
         # Loop through submitted lists and add existing, or create a new one
         lists = form_data.getlist("lists")
-        for list in lists:
+        for the_list in lists:
             try:
-                paper.lists.add(List.objects.get(pk=list))
-            except:
-                paper.lists.add(List.objects.create(name=list, user=request.user))
+                paper.lists.add(List.objects.get(pk=the_list))
+            except ValueError:
+                paper.lists.add(List.objects.create(name=the_list, user=request.user))
 
         # Loop through submitted authors and add existing, or create a new one
         authors = form_data.getlist("authors")
         for author in authors:
             try:
                 paper.authors.add(Author.objects.get(pk=author))
-            except:
+            except ValueError:
                 paper.authors.add(Author.objects.create(name=author, user=request.user))
 
         paper.save()
 
-        return HttpResponseRedirect(reverse("research_assistant:single_paper", args=(paper.id,)))
+        return HttpResponseRedirect(
+            reverse("research_assistant:single_paper", args=(paper.id,))
+        )
 
 
 @login_required
 def edit_paper(request, paper_id):
+    """Loads the edit paper form and handles posting the edits"""
 
     # Load the form
     if request.method == "GET":
         paper = Paper.objects.get(pk=paper_id)
         paper_form = AddPaperForm(request.user, instance=paper)
         template_name = "paper/edit.html"
-        context = {
-            "paper_form": paper_form,
-            "paper_id": paper_id,
-            "file_error": False
-        }
+        context = {"paper_form": paper_form, "paper_id": paper_id, "file_error": False}
         return render(request, template_name, context)
 
     elif request.method == "POST":
@@ -120,11 +115,14 @@ def edit_paper(request, paper_id):
         paper.title = form_data["title"]
         paper.source_url = form_data["source_url"]
         paper.date_published = form_data["date_published"]
-        # paper.file_url = file
+        paper.is_read = True if form_data.get("is_read") else False
+
         try:
             paper.journal = Journal.objects.get(pk=form_data["journal"])
-        except:
-            paper.journal = Journal.objects.create(name=form_data["journal"], user=request.user)
+        except ValueError:
+            paper.journal = Journal.objects.create(
+                name=form_data["journal"], user=request.user
+            )
 
         # Save changes to paper
         paper.save()
@@ -148,7 +146,7 @@ def edit_paper(request, paper_id):
         for tag in new_tags:
             try:
                 paper.tags.add(Tag.objects.get(pk=tag))
-            except:
+            except ValueError:
                 paper.tags.add(Tag.objects.create(name=tag, user=request.user))
 
         # Repeat process for authors
@@ -167,7 +165,7 @@ def edit_paper(request, paper_id):
         for author in new_authors:
             try:
                 paper.authors.add(Author.objects.get(pk=author))
-            except:
+            except ValueError:
                 paper.authors.add(Author.objects.create(name=author, user=request.user))
 
         # Repeat process for lists
@@ -183,21 +181,23 @@ def edit_paper(request, paper_id):
                 new_lists.remove(str(old_list.id))
 
         # Add the remaining lists
-        for list in new_lists:
+        for the_list in new_lists:
             try:
-                paper.lists.add(List.objects.get(pk=list))
-            except:
-                paper.lists.add(List.objects.create(name=list, user=request.user))
+                paper.lists.add(List.objects.get(pk=the_list))
+            except ValueError:
+                paper.lists.add(List.objects.create(name=the_list, user=request.user))
 
-        return HttpResponseRedirect(reverse("research_assistant:single_paper", args=(paper.id,)))
+        return HttpResponseRedirect(
+            reverse("research_assistant:single_paper", args=(paper.id,))
+        )
 
 
 def delete_paper(request, paper_id):
+    """Displays a delete confirmation and handles deleting the paper."""
+
     if request.method == "GET":
         paper = Paper.objects.get(pk=paper_id)
-        context = {
-            "paper": paper
-        }
+        context = {"paper": paper}
         template = "paper/delete.html"
         return render(request, template, context)
 
