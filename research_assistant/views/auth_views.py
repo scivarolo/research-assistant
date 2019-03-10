@@ -1,10 +1,16 @@
-from django.contrib.auth import logout, login, authenticate
+"""
+Authentication views
+"""
+
+
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.contrib import messages
 
 from research_assistant.forms import UserForm
+
 
 def register_user(request):
     """Handles the creation of a new user
@@ -12,8 +18,6 @@ def register_user(request):
     Method arguments:
         request -- The full HTTP request object
     """
-
-    registered = False
 
     if request.method == "POST":
         user_form = UserForm(data=request.POST)
@@ -23,8 +27,6 @@ def register_user(request):
 
             user.set_password(user.password)
             user.save()
-
-            registered = True
 
         return login_user(request)
 
@@ -56,12 +58,14 @@ def login_user(request):
                 return HttpResponseRedirect(request.POST.get("next", "/"))
 
         else:
-            messages.error(request, "Login Failed. Your username or password is incorrect.")
+            messages.error(
+                request, "Login Failed. Your username or password is incorrect.")
 
     return render(request, "login.html", context)
 
 
 @login_required
 def logout_user(request):
+    """Handles logging out a user."""
     logout(request)
     return HttpResponseRedirect("/")
