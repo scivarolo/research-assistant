@@ -27,7 +27,10 @@
 <ul class="list-group">
   {% if list.paper_set.all %}
     {% for paper in list.paper_set.all %}
-      <a class="list-group-item list-group-item-action" href="{% url 'research_assistant:single_paper' paper.id %}">{{ paper.title }}</a>
+      <a class="list-group-item list-group-item-action" href="{% url 'research_assistant:single_paper' paper.id %}">
+        {{ paper.title }}
+        {% if not paper.is_read %}<span class="badge badge-danger badge-pill">Unread</span>{% endif %}
+      </a>
     {% endfor %}
   {% else %}
     <p>There are no papers in this list.</p>
