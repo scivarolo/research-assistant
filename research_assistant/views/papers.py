@@ -7,14 +7,14 @@ from django.shortcuts import render
 from django.db.models import Q
 
 from research_assistant.models import Paper
-from research_assistant.forms import PaperSearchForm
+from research_assistant.forms import SearchForm
 
 @login_required
 def all_papers(request):
     """Displays a list of all papers."""
 
     papers = Paper.objects.filter(user=request.user)
-    search_form = PaperSearchForm()
+    search_form = SearchForm(placeholder="Search by title, tag, or author")
     context = {}
 
     if request.POST.get("query"):

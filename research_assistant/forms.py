@@ -96,12 +96,12 @@ class AuthorForm(forms.ModelForm):
         fields = ("name",)
 
 
-class PaperSearchForm(forms.Form):
+class SearchForm(forms.Form):
     """ Generates a generic search form. """
 
     query = forms.CharField(
         widget=forms.TextInput(
-            attrs={"placeholder": "Search by title, tag, or author"}
+            attrs={"placeholder": "Search"}
         ),
         label="",
     )
@@ -111,4 +111,7 @@ class PaperSearchForm(forms.Form):
         self.helper.layout = Layout(
             FieldWithButtons("query", Submit("submit", "Search"))
         )
-        super(PaperSearchForm, self).__init__(*args, **kwargs)
+        super(SearchForm, self).__init__(*args, **kwargs)
+        placeholder = kwargs.pop("placeholder", None)
+        if placeholder:
+            self.fields["query"].widget.attrs.update({"placeholder": placeholder})
