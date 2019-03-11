@@ -48,7 +48,18 @@ def single_author(request, author_id):
 def new_author(request):
     """ Creates a new author."""
 
-    pass
+    if request.method == "POST":
+        name = request.POST["name"]
+        author = Author.objects.create(name=name, user=request.user)
+        author.save()
+        return HttpResponseRedirect(
+            reverse("research_assistant:single_author", args=(author.id,))
+        )
+
+    template = "authors/new.html"
+    context = {"new_author_form": AuthorForm()}
+
+    return render(request, template, context)
 
 
 @login_required
