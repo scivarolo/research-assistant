@@ -1,0 +1,19 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <div class="row">
+    <div class="col">
+      {% if author.paper_set.all|length == 0 %}
+      <h3>Are you sure you want to delete {{ author.name }}?</h3>
+      <p>This author can be deleted because there are no papers associated with them.</p>
+      <form class="d-inline" action="{% url 'research_assistant:delete_author' request.resolver_match.kwargs.author_id %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+      </form>
+      {% else %}
+      <h3>Author {{ author.name }} cannot be deleted</h3>
+      {% endif %}
+      <a class="d-inline-block btn btn-primary" href="{% url 'research_assistant:single_author' request.resolver_match.kwargs.author_id %}">Cancel</a>
+    </div>
+  </div>
+{% endblock content %}

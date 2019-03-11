@@ -43,6 +43,7 @@
             <li class="nav-item {% if 'papers' in request.path %}active{% endif %}"><a href="{% url 'research_assistant:all_papers' %}" class="nav-link">Papers</a></li>
             <li class="nav-item {% if 'lists' in request.path %}active{% endif %}"><a href="{% url 'research_assistant:all_lists' %}" class="nav-link">Lists</a></li>
             <li class="nav-item {% if 'tags' in request.path %}active{% endif %}"><a href="{% url 'research_assistant:all_tags' %}" class="nav-link">Tags</a></li>
+            <li class="nav-item {% if 'authors' in request.path %}active{% endif %}"><a href="{% url 'research_assistant:all_authors' %}" class="nav-link">Authors</a></li>
           </ul>
         </div>
       </nav>
