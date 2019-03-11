@@ -17,6 +17,7 @@ def all_papers(request):
     search_form = SearchForm(placeholder="Search by title, tag, or author")
     context = {}
 
+    # Update query if a search is submitted
     if request.POST.get("query"):
         query = request.POST["query"]
         if query is not None:

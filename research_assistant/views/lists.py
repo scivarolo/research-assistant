@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 
-from research_assistant.forms import ListForm
+from research_assistant.forms import ListForm, SearchForm
 from research_assistant.models import List
 
 
@@ -13,9 +13,19 @@ def all_lists(request):
     """ Load all lists associated with user. """
 
     lists = List.objects.filter(user=request.user)
+    search_form = SearchForm(placeholder="Search lists")
+    context = {}
+
+    # Update query if a search is submitted
+    if request.POST.get("query"):
+        query = request.POST["query"]
+        if query is not None:
+            context["query"] = query
+            lists = List.objects.filter(name__contains=query, user=request.user)
 
     template = "lists/lists.html"
-    context = {"lists": lists}
+    context["lists"] = lists
+    context["search_form"] = search_form
 
     return render(request, template, context)
 

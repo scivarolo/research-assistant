@@ -111,7 +111,7 @@ class SearchForm(forms.Form):
         self.helper.layout = Layout(
             FieldWithButtons("query", Submit("submit", "Search"))
         )
-        super(SearchForm, self).__init__(*args, **kwargs)
         placeholder = kwargs.pop("placeholder", None)
+        super(SearchForm, self).__init__(*args, **kwargs)
         if placeholder:
             self.fields["query"].widget.attrs.update({"placeholder": placeholder})

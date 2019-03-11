@@ -20,9 +20,9 @@
   </div>
 </div>
 {% if query and papers|length == 0 %}
-  <p>No results for "{{query}}". <a class="btn btn-primary" href="{% url 'research_assistant:all_papers' %}">Clear Search</a></p>
+  <p>No results for "{{query}}". <a class="btn btn-sm btn-secondary" href="{% url 'research_assistant:all_papers' %}">Clear Search</a></p>
 {% else %}
-  {% if query %}<p>Search results for: "{{query}}":{% endif %}
+  {% if query %}<p>Search results for: "{{query}}": <a class="btn btn-sm btn-secondary" href="{% url 'research_assistant:all_papers' %}">Clear Search</a>{% endif %}
   <ul class="list-group">
     {% for paper in papers %}
       <a class="list-group-item list-group-item-action" href="{% url 'research_assistant:single_paper' paper.id %}">{{ paper.title }}</a>
