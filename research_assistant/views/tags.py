@@ -31,6 +31,17 @@ def single_tag(request, tag_id):
     template = "tags/single.html"
     context = {"tag": tag}
 
+    if request.method == "GET" and request.GET.get("edit"):
+        edit_tag_form = TagForm(instance=tag)
+        context = {
+            "tag": tag,
+            "edit_tag_form": edit_tag_form
+        }
+
+    elif request.method == "POST":
+        tag.name = request.POST["name"]
+        tag.save()
+
     return render(request, template, context)
 
 
