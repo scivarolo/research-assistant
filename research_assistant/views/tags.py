@@ -61,3 +61,18 @@ def new_tag(request):
     context = {"new_tag_form": TagForm()}
 
     return render(request, template, context)
+
+
+@login_required
+def delete_tag(request, tag_id):
+    """ Delete a tag and remove the relationships to papers."""
+
+    tag = Tag.objects.get(pk=tag_id, user=request.user)
+
+    if request.method == "POST":
+        tag.delete()
+        return HttpResponseRedirect(reverse("research_assistant:all_tags"))
+
+    template = "tags/delete.html"
+    context = {"tag": tag}
+    return render(request, template, context)

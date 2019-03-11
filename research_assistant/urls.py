@@ -38,5 +38,6 @@ urlpatterns = [
     # Tag Views
     path("tags/", views.all_tags, name="all_tags"),
     path("tags/<int:tag_id>", views.single_tag, name="single_tag"),
+    path("tags/<int:tag_id>/delete/", views.delete_tag, name="delete_tag"),
     path("tags/new/", views.new_tag, name="new_tag"),
 ]

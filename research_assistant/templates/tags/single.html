@@ -23,7 +23,7 @@
     {% endif %}
   </div>
   <div class="col text-right">
-    <a href="#" class="btn btn-danger">Delete Tag</a>
+    <a href="{% url 'research_assistant:delete_tag' tag.id %}" class="btn btn-danger">Delete Tag</a>
   </div>
 </div>
 <div class="row">
@@ -32,7 +32,7 @@
       {% if tag.paper_set.all %}
         {% for paper in tag.paper_set.all %}
           <a class="list-group-item list-group-item-action" href="{% url 'research_assistant:single_paper' paper.id %}">{{ paper.title }}
-            {% if not paper.is_read %}<span class="badge badge-danger badge-pill">Urnread</span>{% endif %}
+            {% if not paper.is_read %}<span class="badge badge-danger badge-pill">Unread</span>{% endif %}
           </a>
         {% endfor %}
       {% else %}
