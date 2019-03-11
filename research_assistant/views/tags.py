@@ -21,8 +21,17 @@ def all_tags(request):
 
 
 @login_required
-def single_tag(request):
-    pass
+def single_tag(request, tag_id):
+    """ Load the single requested tag, and make sure it is associated with the current user.
+
+        Also handles editing the tag name when the user clicks the edit button next to the name.
+    """
+
+    tag = Tag.objects.get(pk=tag_id, user=request.user)
+    template = "tags/single.html"
+    context = {"tag": tag}
+
+    return render(request, template, context)
 
 
 @login_required
