@@ -2,8 +2,9 @@
 Contains all of the forms used in research_assistant.
 """
 
+from crispy_forms.bootstrap import FieldWithButtons
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
+from crispy_forms.layout import Layout, Submit
 from django import forms
 from django.contrib.auth.models import User
 from django_select2.forms import Select2MultipleWidget, Select2Widget
@@ -93,3 +94,21 @@ class AuthorForm(forms.ModelForm):
     class Meta:
         model = Author
         fields = ("name",)
+
+
+class PaperSearchForm(forms.Form):
+    """ Generates a generic search form. """
+
+    query = forms.CharField(
+        widget=forms.TextInput(
+            attrs={"placeholder": "Search by title, tag, or author"}
+        ),
+        label="",
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            FieldWithButtons("query", Submit("submit", "Search"))
+        )
+        super(PaperSearchForm, self).__init__(*args, **kwargs)
