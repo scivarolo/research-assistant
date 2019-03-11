@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 
-# from research_assistant.forms import TagForm
+from research_assistant.forms import TagForm
 from research_assistant.models import Tag
 
 
@@ -47,4 +47,17 @@ def single_tag(request, tag_id):
 
 @login_required
 def new_tag(request):
-    pass
+    """ Creates a new tag. """
+
+    if request.method == "POST":
+        name = request.POST["name"]
+        tag = Tag.objects.create(name=name, user=request.user)
+        tag.save()
+        return HttpResponseRedirect(
+            reverse("research_assistant:single_tag", args=(tag.id,))
+        )
+
+    template = "tags/new.html"
+    context = {"new_tag_form": TagForm()}
+
+    return render(request, template, context)
