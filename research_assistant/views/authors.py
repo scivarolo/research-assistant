@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 
-from research_assistant.forms import AuthorForm
+from research_assistant.forms import AuthorForm, SearchForm
 from research_assistant.models import Author
 
 
@@ -13,9 +13,19 @@ def all_authors(request):
     """Load all authors associated with current user."""
 
     authors = Author.objects.filter(user=request.user)
+    search_form = SearchForm(placeholder="Search authors")
+    context = {}
+
+    # Update query if a search is submitted
+    if request.POST.get("query"):
+        query = request.POST["query"]
+        if query is not None:
+            context["query"] = query
+            authors = Author.objects.filter(name__contains=query, user=request.user)
 
     template = "authors/authors.html"
-    context = {"authors": authors}
+    context["authors"] = authors
+    context["search_form"] = search_form
 
     return render(request, template, context)
 
