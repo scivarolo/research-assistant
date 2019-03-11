@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 
-# from research_assistant.forms import AuthorForm
+from research_assistant.forms import AuthorForm
 from research_assistant.models import Author
 
 
@@ -29,6 +29,17 @@ def single_author(request, author_id):
     author = Author.objects.get(pk=author_id, user=request.user)
     template = "authors/single.html"
     context = {"author": author}
+
+    if request.method == "GET" and request.GET.get("edit"):
+        edit_author_form = AuthorForm(instance=author)
+        context = {
+            "author": author,
+            "edit_author_form": edit_author_form
+        }
+
+    elif request.method == "POST":
+        author.name = request.POST["name"]
+        author.save()
 
     return render(request, template, context)
 

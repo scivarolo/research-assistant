@@ -85,3 +85,11 @@ class TagForm(forms.ModelForm):
     class Meta:
         model = Tag
         fields = ("name",)
+
+
+class AuthorForm(forms.ModelForm):
+    """Form for creating a new author or editing an existing Author's name"""
+
+    class Meta:
+        model = Author
+        fields = ("name",)
