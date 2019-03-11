@@ -66,4 +66,12 @@ def new_author(request):
 def delete_author(request, author_id):
     """ Displays a confirmation page that only lets the user delete an Author if no Paper's are related to them."""
 
-    pass
+    author = Author.objects.get(pk=author_id, user=request.user)
+
+    if request.method == "POST":
+        author.delete()
+        return HttpResponseRedirect(reverse("research_assistant:all_authors"))
+
+    template = "authors/delete.html"
+    context = {"author": author}
+    return render(request, template, context)
