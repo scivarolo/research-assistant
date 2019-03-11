@@ -26,8 +26,11 @@ def single_author(request, author_id):
 
     Also handles editing the author name when edit button is clicked.
     """
+    author = Author.objects.get(pk=author_id, user=request.user)
+    template = "authors/single.html"
+    context = {"author": author}
 
-    pass
+    return render(request, template, context)
 
 
 @login_required
