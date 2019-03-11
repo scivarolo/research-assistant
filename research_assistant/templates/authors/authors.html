@@ -3,7 +3,7 @@
 {% block content %}
 <div class="row">
   <div class="col">
-    <h1>My Tags</h1>
+    <h1>My Authors</h1>
   </div>
   <div class="col text-right">
     <a href="{% url 'research_assistant:new_author' %}" class="btn btn-primary">New Author</a>
@@ -14,7 +14,11 @@
     <ul class="list-group">
       {% for author in authors %}
         <a href="{% url 'research_assistant:single_author' author.id %}" class="list-group-item list-group-item-action">{{ author.name }}
-        <span class="badge badge-pill badge-primary">{{ author.paper_set.all|length }}</span>
+        {% if author.paper_set.all|length > 0 %}
+          <span class="badge badge-pill badge-primary">{{ author.paper_set.all|length }} papers</span>
+        {% else %}
+          <span class="badge badge-pill badge-light">{{ author.paper_set.all|length }} papers</span>
+        {% endif %}
         </a>
       {% endfor %}
     </ul>
