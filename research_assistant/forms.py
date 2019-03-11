@@ -77,3 +77,11 @@ class ListForm(forms.ModelForm):
     class Meta:
         model = List
         fields = ("name",)
+
+
+class TagForm(forms.ModelForm):
+    """Form for creating a new tag or editing a tag's name"""
+
+    class Meta:
+        model = Tag
+        fields = ("name",)

@@ -1,0 +1,26 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col">
+    <h1>My Tags</h1>
+  </div>
+  <div class="col text-right">
+    <a class="btn btn-primary" href="{% url 'research_assistant:new_tag' %}">New Tag</a>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <ul class="list-group">
+      {% for tag in tags %}
+      <a class="list-group-item list-group-item-action" href="{% url 'research_assistant:single_tag' tag.id %}">{{ tag.name }}
+        <span class="badge badge-pill badge-primary">{{tag.paper_set.all|length}} papers</span>
+        {% if tag.unread_count > 0 %}
+        <span class="badge badge-pill badge-danger">{{tag.unread_count}} unread</span>
+        {% endif %}
+      </a>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock content %}

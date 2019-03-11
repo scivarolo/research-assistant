@@ -1,0 +1,44 @@
+{% extends 'index.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row">
+  <div class="col">
+    {% if edit_tag_form %}
+    <form method="POST" class="mb-3">
+      {% csrf_token %}
+      {{ edit_tag_form|crispy }}
+      <input type="submit" class="btn btn-primary">
+      <button class="btn btn-secondary">Cancel</button>
+    </form>
+    {% else %}
+    <h1>{{ tag.name }}
+      <span class="edit-button hidden">
+        <form method="GET">
+          <button type="submit" class="btn btn-primary" name="edit" value="edit"><i class="fas fa-pen"></i></button>
+        </form>
+      </span>
+
+    </h1>
+    {% endif %}
+  </div>
+  <div class="col text-right">
+    <a href="{% url 'research_assistant:delete_tag' tag.id %}" class="btn btn-danger">Delete Tag</a>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <ul class="list-group">
+      {% if tag.paper_set.all %}
+        {% for paper in tag.paper_set.all %}
+          <a class="list-group-item list-group-item-action" href="{% url 'research_assistant:single_paper' paper.id %}">{{ paper.title }}
+            {% if not paper.is_read %}<span class="badge badge-danger badge-pill">Unread</span>{% endif %}
+          </a>
+        {% endfor %}
+      {% else %}
+      <p>There are no papers with this tag.</p>
+      {% endif %}
+    </ul>
+  </div>
+</div>
+{% endblock content %}
