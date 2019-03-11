@@ -6,3 +6,4 @@ from .papers import *
 from .notes import *
 from .lists import *
 from .tags import *
+from .authors import *

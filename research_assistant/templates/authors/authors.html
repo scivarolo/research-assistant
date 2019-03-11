@@ -1,0 +1,23 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col">
+    <h1>My Tags</h1>
+  </div>
+  <div class="col text-right">
+    <a href="{% url 'research_assistant:new_author' %}" class="btn btn-primary">New Author</a>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <ul class="list-group">
+      {% for author in authors %}
+        <a href="{% url 'research_assistant:single_author' author.id %}" class="list-group-item list-group-item-action">{{ author.name }}
+        <span class="badge badge-pill badge-primary">{{ author.paper_set.all|length }}</span>
+        </a>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock content %}
