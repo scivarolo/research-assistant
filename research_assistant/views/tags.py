@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 
-from research_assistant.forms import TagForm
+from research_assistant.forms import SearchForm, TagForm
 from research_assistant.models import Tag
 
 
@@ -13,9 +13,19 @@ def all_tags(request):
     """Load all tags associated with current user."""
 
     tags = Tag.objects.filter(user=request.user)
+    search_form = SearchForm(placeholder="Search tags")
+    context = {}
+
+    # Update query if a search is submitted
+    if request.POST.get("query"):
+        query = request.POST["query"]
+        if query is not None:
+            context["query"] = query
+            tags = Tag.objects.filter(name__contains=query, user=request.user)
 
     template = "tags/tags.html"
-    context = {"tags": tags}
+    context["tags"] = tags
+    context["search_form"] = search_form
 
     return render(request, template, context)
 

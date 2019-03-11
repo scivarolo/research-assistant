@@ -19,20 +19,24 @@
     </form>
   </div>
 </div>
-{% if query and lists|length == 0 %}
-  <p>No lists match "{{query}}". <a class="btn btn-sm btn-secondary" href="{% url 'research_assistant:all_lists' %}">Clear Search</a></p>
-{% else %}
-  {% if query %}<p>Search results for: "{{query}}": <a class="btn btn-sm btn-secondary" href="{% url 'research_assistant:all_lists' %}">Clear Search</a>{% endif %}
-  <ul class="list-group">
-    {% for list in lists %}
-      <a class="list-group-item list-group-item-action" href="{% url 'research_assistant:single_list' list.id %}">{{ list.name }}
-      <span class="badge badge-pill badge-primary">{{list.paper_set.all|length}} papers</span>
-      {% if list.unread_count > 0 %}
-      <span class="badge badge-pill badge-danger">{{list.unread_count}} unread</span>
-      {% endif %}
-      </a>
-    {% endfor %}
-  </ul>
-{% endif %}
+<div class="row">
+  <div class="col">
+  {% if query and lists|length == 0 %}
+    <p>No lists match "{{query}}". <a class="btn btn-sm btn-secondary" href="{% url 'research_assistant:all_lists' %}">Clear Search</a></p>
+  {% else %}
+    {% if query %}<p>Search results for: "{{query}}": <a class="btn btn-sm btn-secondary" href="{% url 'research_assistant:all_lists' %}">Clear Search</a>{% endif %}
+    <ul class="list-group">
+      {% for list in lists %}
+        <a class="list-group-item list-group-item-action" href="{% url 'research_assistant:single_list' list.id %}">{{ list.name }}
+        <span class="badge badge-pill badge-primary">{{list.paper_set.all|length}} papers</span>
+        {% if list.unread_count > 0 %}
+        <span class="badge badge-pill badge-danger">{{list.unread_count}} unread</span>
+        {% endif %}
+        </a>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  </div>
+</div>
 
 {% endblock content %}
