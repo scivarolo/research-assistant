@@ -44,7 +44,7 @@
       <h5>Tags</h5>
       <ul>
       {% for tag in paper.tags.all %}
-        <li>{{ tag.name }}</li>
+        <li><a href="{% url 'research_assistant:single_tag' tag.id %}">{{ tag.name }}</a></li>
       {% endfor %}
       </ul>
       {% endif %}
