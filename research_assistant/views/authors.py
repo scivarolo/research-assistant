@@ -3,9 +3,10 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
+from django.db.models import Prefetch
 
-from research_assistant.forms import AuthorForm
-from research_assistant.models import Author
+from research_assistant.forms import AuthorForm, SearchForm
+from research_assistant.models import Author, Paper
 
 
 @login_required
@@ -13,9 +14,17 @@ def all_authors(request):
     """Load all authors associated with current user."""
 
     authors = Author.objects.filter(user=request.user)
+    context = {"search_form": SearchForm(placeholder="Search authors")}
+
+    # Update query if a search is submitted
+    if request.POST.get("query"):
+        query = request.POST["query"]
+        if query is not None:
+            context["query"] = query
+            authors = Author.objects.filter(name__contains=query, user=request.user)
 
     template = "authors/authors.html"
-    context = {"authors": authors}
+    context["authors"] = authors
 
     return render(request, template, context)
 
@@ -28,18 +37,31 @@ def single_author(request, author_id):
     """
     author = Author.objects.get(pk=author_id, user=request.user)
     template = "authors/single.html"
-    context = {"author": author}
+    context = {"search_form": SearchForm(placeholder="Search papers by this author")}
 
+    # if searching
+    if request.POST.get("query"):
+        query = request.POST["query"]
+        if query is not None:
+            context["query"] = query
+            # Prefetch the papers in the query
+            papers = Paper.objects.filter(title__contains=query, user=request.user)
+            author = (
+                Author.objects.filter(pk=author_id, user=request.user)
+                .prefetch_related(Prefetch("paper_set", queryset=papers))
+                .get()
+            )
+
+    # if requestiong edit
     if request.method == "GET" and request.GET.get("edit"):
-        edit_author_form = AuthorForm(instance=author)
-        context = {
-            "author": author,
-            "edit_author_form": edit_author_form
-        }
+        context["edit_author_form"] = AuthorForm(instance=author)
 
-    elif request.method == "POST":
+    # if saving edit
+    elif request.POST.get("name"):
         author.name = request.POST["name"]
         author.save()
+
+    context["author"] = author
 
     return render(request, template, context)
 

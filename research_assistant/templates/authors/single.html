@@ -25,8 +25,25 @@
     <a href="{% url 'research_assistant:delete_author' author.id %}" class="btn btn-danger">Delete Author</a>
   </div>
 </div>
+<hr class="mb-4">
+
+<div class="row">
+  <div class="col col-md-4">
+    <form method="post">
+      {% csrf_token %}
+      {% crispy search_form %}
+    </form>
+  </div>
+</div>
+
+
+
 <div class="row">
   <div class="col">
+    {% if query and author.paper_set.all|length == 0 %}
+      <p>No papers by this author match "{{query}}". <a class="btn btn-sm btn-secondary" href="{% url 'research_assistant:single_author' author.id %}">Clear Search</a></p>
+    {% else %}
+      {% if query %}<p>Search results for "{{query}}" <a class="btn btn-sm btn-secondary" href="{% url 'research_assistant:single_author' author.id %}">Clear Search</a>{% endif %}
     <ul class="list-group">
       {% if author.paper_set.all %}
         {% for paper in author.paper_set.all %}
@@ -40,6 +57,7 @@
       <p>There are no papers related to this author.</p>
       {% endif %}
     </ul>
+    {% endif %}
   </div>
 </div>
 {% endblock content %}

@@ -3,9 +3,10 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
+from django.db.models import Prefetch
 
-from research_assistant.forms import TagForm
-from research_assistant.models import Tag
+from research_assistant.forms import SearchForm, TagForm
+from research_assistant.models import Tag, Paper
 
 
 @login_required
@@ -13,9 +14,17 @@ def all_tags(request):
     """Load all tags associated with current user."""
 
     tags = Tag.objects.filter(user=request.user)
+    context = {"search_form": SearchForm(placeholder="Search tags")}
+
+    # Update query if a search is submitted
+    if request.POST.get("query"):
+        query = request.POST["query"]
+        if query is not None:
+            context["query"] = query
+            tags = Tag.objects.filter(name__contains=query, user=request.user)
 
     template = "tags/tags.html"
-    context = {"tags": tags}
+    context["tags"] = tags
 
     return render(request, template, context)
 
@@ -26,21 +35,33 @@ def single_tag(request, tag_id):
 
         Also handles editing the tag name when the user clicks the edit button next to the name.
     """
-
     tag = Tag.objects.get(pk=tag_id, user=request.user)
     template = "tags/single.html"
-    context = {"tag": tag}
+    context = {"search_form": SearchForm(placeholder="Search papers within tag")}
 
-    if request.method == "GET" and request.GET.get("edit"):
-        edit_tag_form = TagForm(instance=tag)
-        context = {
-            "tag": tag,
-            "edit_tag_form": edit_tag_form
-        }
+    # if searching
+    if request.POST.get("query"):
+        query = request.POST["query"]
+        if query is not None:
+            context["query"] = query
+            # Prefetch the papers in the query
+            papers = Paper.objects.filter(title__contains=query, user=request.user)
+            tag = (
+                Tag.objects.filter(pk=tag_id, user=request.user)
+                .prefetch_related(Prefetch("paper_set", queryset=papers))
+                .get()
+            )
 
-    elif request.method == "POST":
+    # if requesting edit
+    elif request.method == "GET" and request.GET.get("edit"):
+        context["edit_tag_form"] = TagForm(instance=tag)
+
+    # if saving edit
+    elif request.POST.get("name"):
         tag.name = request.POST["name"]
         tag.save()
+
+    context["tag"] = tag
 
     return render(request, template, context)
 
