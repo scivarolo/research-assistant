@@ -3,9 +3,10 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
+from django.db.models import Prefetch
 
 from research_assistant.forms import ListForm, SearchForm
-from research_assistant.models import List
+from research_assistant.models import List, Paper
 
 
 @login_required
@@ -39,15 +40,31 @@ def single_list(request, list_id):
 
     the_list = List.objects.get(pk=list_id, user=request.user)
     template = "lists/single.html"
-    context = {"list": the_list}
+    context = {"search_form": SearchForm(placeholder="Search papers within list")}
 
-    if request.method == "GET" and request.GET.get("edit"):
-        edit_list_form = ListForm(instance=the_list)
-        context = {"list": the_list, "edit_list_form": edit_list_form}
+    # if searching
+    if request.POST.get("query"):
+        query = request.POST["query"]
+        if query is not None:
+            context["query"] = query
+            # Prefetch the papers in the query
+            papers = Paper.objects.filter(title__contains=query, user=request.user)
+            the_list = (
+                List.objects.filter(pk=list_id, user=request.user)
+                .prefetch_related(Prefetch("paper_set", queryset=papers))
+                .get()
+            )
 
-    elif request.method == "POST":
+    # if requesting edit
+    elif request.method == "GET" and request.GET.get("edit"):
+        context["edit_list_form"] = ListForm(instance=the_list)
+
+    # if saving edit
+    elif request.POST.get("name"):
         the_list.name = request.POST["name"]
         the_list.save()
+
+    context["list"] = the_list
 
     return render(request, template, context)
 
