@@ -4,26 +4,55 @@ Views for displaying Papers.
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from django.db.models import Q
 
 from research_assistant.models import Paper
-from research_assistant.forms import SearchForm
+from research_assistant.forms import SearchForm, PaperFilterForm
 
 @login_required
 def all_papers(request):
     """Displays a list of all papers."""
-
+    print(request)
     papers = Paper.objects.filter(user=request.user)
     search_form = SearchForm(placeholder="Search by title, tag, or author")
-    context = {}
+    context = {
+        "search_form": SearchForm(placeholder="Search by title, tag, or author"),
+        "filter_form": PaperFilterForm(user=request.user)
+    }
 
-    # Update query if a search is submitted
-    if request.POST.get("query"):
-        query = request.POST["query"]
-        if query is not None:
-            context["query"] = query
-            lookups = Q(title__contains=query) | Q(tags__name__contains=query) | Q(authors__name__contains=query)
-            papers = Paper.objects.filter(lookups, user=request.user).distinct()
+    # The filter form is being cleared
+    if request.POST.get("clear"):
+        pass
+
+    # Filter the papers
+    elif request.method == "POST":
+        data = request.POST.copy()
+        query = data.get("query")
+        tags = data.getlist("tags") if data.getlist("tags") else ""
+        lists = data.getlist("lists") if data.getlist("lists") else ""
+        authors = data.getlist("authors") if data.getlist("authors") else ""
+        is_unread = data.get("is_unread")
+
+        papers = Paper.objects.filter(user=request.user)
+
+        if query != "":
+            papers = papers.filter(title__contains=query)
+
+        if tags != "":
+            for tag in tags:
+                papers = papers.filter(tags__id=tag)
+
+        if lists != "":
+            for the_list in lists:
+                papers = papers.filter(lists__id=the_list)
+
+        if authors != "":
+            for author in authors:
+                papers = papers.filter(authors__id=author)
+
+        if is_unread is not None:
+            papers = papers.filter(is_read=False)
+
+        context["filter_form"] = PaperFilterForm(data=data, user=request.user)
 
     template = "paper/list.html"
     context["papers"] = papers

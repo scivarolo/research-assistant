@@ -4,7 +4,7 @@ Contains all of the forms used in research_assistant.
 
 from crispy_forms.bootstrap import FieldWithButtons
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit
+from crispy_forms.layout import Layout, Submit, Div
 from django import forms
 from django.contrib.auth.models import User
 from django_select2.forms import Select2MultipleWidget, Select2Widget
@@ -115,3 +115,64 @@ class SearchForm(forms.Form):
         super(SearchForm, self).__init__(*args, **kwargs)
         if placeholder:
             self.fields["query"].widget.attrs.update({"placeholder": placeholder})
+
+
+class PaperFilterForm(forms.ModelForm):
+    """ Form for filtering papers by query, tag, list, author, unread """
+    is_unread = forms.BooleanField(initial=False, required=False, label="Show unread papers only")
+    query = forms.CharField(
+        widget=forms.TextInput(
+            attrs={"placeholder": "Search by title"}
+        ), required=False
+    )
+    class Meta:
+        model = Paper
+        fields = (
+            "query",
+            "tags",
+            "lists",
+            "authors",
+            "is_unread",
+        )
+        widgets = {
+            "tags": Select2MultipleWidget(
+                attrs={"data-token-separators": "[',']"}
+            ),
+            "lists": Select2MultipleWidget(
+                attrs={"data-token-separators": "[',']"}
+            ),
+            "authors": Select2MultipleWidget(
+                attrs={"data-token-separators": '[","]'}
+            )
+        }
+
+    def __init__(self, user, *args, **kwargs):
+        super(PaperFilterForm, self).__init__(*args, **kwargs)
+        self.fields["tags"].queryset = Tag.objects.filter(user=user)
+        self.fields["lists"].queryset = List.objects.filter(user=user)
+        self.fields["authors"].queryset = Author.objects.filter(user=user)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit("submit", "Filter"))
+        self.helper.add_input(Submit("clear", "Clear"))
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    "query",
+                    css_class="col"
+                ),
+                Div(
+                    "tags",
+                    css_class="col"
+                ),
+                Div(
+                    "lists",
+                    css_class="col"
+                ),
+                Div(
+                    "authors",
+                    "is_unread",
+                    css_class="col"
+                ),
+                css_class="row",
+            )
+        )
