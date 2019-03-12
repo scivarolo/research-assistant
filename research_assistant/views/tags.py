@@ -14,8 +14,7 @@ def all_tags(request):
     """Load all tags associated with current user."""
 
     tags = Tag.objects.filter(user=request.user)
-    search_form = SearchForm(placeholder="Search tags")
-    context = {}
+    context = {"search_form": SearchForm(placeholder="Search tags")}
 
     # Update query if a search is submitted
     if request.POST.get("query"):
@@ -26,7 +25,6 @@ def all_tags(request):
 
     template = "tags/tags.html"
     context["tags"] = tags
-    context["search_form"] = search_form
 
     return render(request, template, context)
 
@@ -39,19 +37,20 @@ def single_tag(request, tag_id):
     """
     tag = Tag.objects.get(pk=tag_id, user=request.user)
     template = "tags/single.html"
-    context = {
-        "search_form": SearchForm(placeholder="Search papers within tag")
-    }
+    context = {"search_form": SearchForm(placeholder="Search papers within tag")}
 
     # if searching
     if request.POST.get("query"):
         query = request.POST["query"]
         if query is not None:
             context["query"] = query
-            print("QUERY", query)
             # Prefetch the papers in the query
             papers = Paper.objects.filter(title__contains=query, user=request.user)
-            tag = Tag.objects.filter(pk=tag_id, user=request.user).prefetch_related(Prefetch("paper_set", queryset=papers))[0]
+            tag = (
+                Tag.objects.filter(pk=tag_id, user=request.user)
+                .prefetch_related(Prefetch("paper_set", queryset=papers))
+                .get()
+            )
 
     # if requesting edit
     elif request.method == "GET" and request.GET.get("edit"):
