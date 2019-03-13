@@ -45,13 +45,13 @@
 
 <div class="row">
   <div class="col">
-  {% if list.paper_set.all|length == 0 %}
+  {% if papers|length == 0 %}
     <p>No papers in this list match. <a class="btn btn-sm btn-secondary" href="{% url 'research_assistant:single_list' list.id %}">Clear Search</a></p>
   {% else %}
     {% if query %}<p>Search results for "{{query}}" <a class="btn btn-sm btn-secondary" href="{% url 'research_assistant:single_list' list.id %}">Clear Search</a>{% endif %}
     <ul class="list-group">
-      {% if list.paper_set.all %}
-        {% for paper in list.paper_set.all %}
+      {% if papers %}
+        {% for paper in papers %}
           <a class="list-group-item list-group-item-action" href="{% url 'research_assistant:single_paper' paper.id %}">
             {{ paper.title }}
             {% if not paper.is_read %}<span class="badge badge-danger badge-pill">Unread</span>{% endif %}
