@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 from django.db.models import Prefetch
 
-from research_assistant.forms import ListForm, SearchForm
+from research_assistant.forms import ListForm, SearchForm, PaperFilterForm
 from research_assistant.models import List, Paper
 
 
@@ -40,29 +40,60 @@ def single_list(request, list_id):
 
     the_list = List.objects.get(pk=list_id, user=request.user)
     template = "lists/single.html"
-    context = {"search_form": SearchForm(placeholder="Search papers within list")}
+    context = {
+        "search_form": SearchForm(placeholder="Search papers within list"),
+        "filter_form": PaperFilterForm(user=request.user, current_list=list_id)
+    }
 
-    # if searching
-    if request.POST.get("query"):
-        query = request.POST["query"]
-        if query is not None:
-            context["query"] = query
-            # Prefetch the papers in the query
-            papers = Paper.objects.filter(title__contains=query, user=request.user)
-            the_list = (
-                List.objects.filter(pk=list_id, user=request.user)
-                .prefetch_related(Prefetch("paper_set", queryset=papers))
-                .get()
-            )
-
-    # if requesting edit
-    elif request.method == "GET" and request.GET.get("edit"):
-        context["edit_list_form"] = ListForm(instance=the_list)
+    # The filter form is being cleared
+    if request.POST.get("clear"):
+        pass
 
     # if saving edit
     elif request.POST.get("name"):
         the_list.name = request.POST["name"]
         the_list.save()
+
+    # Filter the papers within the list
+    elif request.method == "POST":
+        data = request.POST.copy()
+        query = data.get("query")
+        tags = data.getlist("tags") if data.getlist("tags") else ""
+        lists = data.getlist("lists") if data.getlist("lists") else ""
+        authors = data.getlist("authors") if data.getlist("authors") else ""
+        is_unread = data.get("is_unread")
+
+        papers = Paper.objects.filter(user=request.user)
+
+        if query != "":
+            papers = papers.filter(title__contains=query)
+
+        if tags != "":
+            for tag in tags:
+                papers = papers.filter(tags__id=tag)
+
+        if lists != "":
+            for the_list in lists:
+                papers = papers.filter(lists__id=the_list)
+
+        if authors != "":
+            for author in authors:
+                papers = papers.filter(authors_id=author)
+
+        if is_unread is not None:
+            papers = papers.filter(is_read=False)
+
+        the_list = (
+            List.objects.filter(pk=list_id, user=request.user)
+            .prefetch_related(Prefetch("paper_set", queryset=papers))
+            .get()
+        )
+        context["filter_form"] = PaperFilterForm(data=data, user=request.user, current_list=list_id)
+
+    # if requesting edit
+    elif request.method == "GET" and request.GET.get("edit"):
+        context["edit_list_form"] = ListForm(instance=the_list)
+
 
     context["list"] = the_list
 

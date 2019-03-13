@@ -11,7 +11,7 @@ from research_assistant.forms import SearchForm, PaperFilterForm
 @login_required
 def all_papers(request):
     """Displays a list of all papers."""
-    print(request)
+
     papers = Paper.objects.filter(user=request.user)
     search_form = SearchForm(placeholder="Search by title, tag, or author")
     context = {
