@@ -118,7 +118,13 @@ class SearchForm(forms.Form):
 
 
 class PaperFilterForm(forms.ModelForm):
-    """ Form for filtering papers by query, tag, list, author, unread """
+    """ Form for filtering papers by query, tag, list, author, unread
+
+        kwargs --
+            current_list [int] -- exclude the provided id from the dropdown
+            current_author [int] -- exclude the provided id from the dropdown
+            current_tag [int] -- exclude the provided id from the dropdown
+    """
     is_unread = forms.BooleanField(initial=False, required=False, label="Show unread papers only")
     query = forms.CharField(
         widget=forms.TextInput(
@@ -147,10 +153,30 @@ class PaperFilterForm(forms.ModelForm):
         }
 
     def __init__(self, user, *args, **kwargs):
+        current_list = kwargs.pop("current_list", None)
+        current_tag = kwargs.pop("current_tag", None)
+        current_author = kwargs.pop("current_author", None)
+
         super(PaperFilterForm, self).__init__(*args, **kwargs)
-        self.fields["tags"].queryset = Tag.objects.filter(user=user)
-        self.fields["lists"].queryset = List.objects.filter(user=user)
-        self.fields["authors"].queryset = Author.objects.filter(user=user)
+
+        # Set up tag query, check if current_tag kwarg supplied
+        tag_query = Tag.objects.filter(user=user)
+        if current_tag is not None:
+            tag_query = tag_query.exclude(pk=current_tag)
+        self.fields["tags"].queryset = tag_query
+
+        # Set up list query, check if current_list kwarg supplied
+        list_query = List.objects.filter(user=user)
+        if current_list is not None:
+            list_query = list_query.exclude(pk=current_list)
+        self.fields["lists"].queryset = list_query
+
+        # Set up author query, check if current_author kwarg supplied
+        author_query = Author.objects.filter(user=user)
+        if current_author is not None:
+            author_query = author_query.exclude(pk=current_author)
+        self.fields["authors"].queryset = author_query
+
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Filter"))
         self.helper.add_input(Submit("clear", "Clear"))
