@@ -42,7 +42,8 @@ def single_tag(request, tag_id):
     template = "tags/single.html"
     context = {
         "filter_form": PaperFilterForm(user=request.user, current_tag=tag_id),
-        "papers": papers}
+        "papers": papers
+    }
 
     # The filter form is being cleared
     if request.POST.get("clear"):
@@ -64,7 +65,6 @@ def single_tag(request, tag_id):
         # )
         context["papers"] = filtered_papers
         context["filter_form"] = PaperFilterForm(data=data, user=request.user, current_tag=tag_id)
-
 
     # if requesting edit
     elif request.method == "GET" and request.GET.get("edit"):
