@@ -5,8 +5,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 from django.db.models import Prefetch
 
-from research_assistant.forms import SearchForm, TagForm
+from research_assistant.forms import SearchForm, TagForm, PaperFilterForm
 from research_assistant.models import Tag, Paper
+from research_assistant.utils import __filter_papers_query
 
 
 @login_required
@@ -36,30 +37,38 @@ def single_tag(request, tag_id):
         Also handles editing the tag name when the user clicks the edit button next to the name.
     """
     tag = Tag.objects.get(pk=tag_id, user=request.user)
+    papers = Paper.objects.filter(user=request.user, tags__id=tag_id)
+
     template = "tags/single.html"
-    context = {"search_form": SearchForm(placeholder="Search papers within tag")}
+    context = {
+        "filter_form": PaperFilterForm(user=request.user, current_tag=tag_id),
+        "papers": papers
+    }
 
-    # if searching
-    if request.POST.get("query"):
-        query = request.POST["query"]
-        if query is not None:
-            context["query"] = query
-            # Prefetch the papers in the query
-            papers = Paper.objects.filter(title__contains=query, user=request.user)
-            tag = (
-                Tag.objects.filter(pk=tag_id, user=request.user)
-                .prefetch_related(Prefetch("paper_set", queryset=papers))
-                .get()
-            )
-
-    # if requesting edit
-    elif request.method == "GET" and request.GET.get("edit"):
-        context["edit_tag_form"] = TagForm(instance=tag)
+    # The filter form is being cleared
+    if request.POST.get("clear"):
+        pass
 
     # if saving edit
     elif request.POST.get("name"):
         tag.name = request.POST["name"]
         tag.save()
+
+    elif request.method == "POST":
+        data = request.POST.copy()
+        filtered_papers = __filter_papers_query(data, request.user)
+        filtered_papers = filtered_papers.filter(tags__id=tag_id)
+        # tag = (
+        #     Tag.objects.filter(pk=tag_id, user=request.user)
+        #     .prefetch_related(Prefetch("paper_set", queryset=papers))
+        #     .get()
+        # )
+        context["papers"] = filtered_papers
+        context["filter_form"] = PaperFilterForm(data=data, user=request.user, current_tag=tag_id)
+
+    # if requesting edit
+    elif request.method == "GET" and request.GET.get("edit"):
+        context["edit_tag_form"] = TagForm(instance=tag)
 
     context["tag"] = tag
 

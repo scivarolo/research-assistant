@@ -1,6 +1,14 @@
 {% extends 'index.html' %}
 {% load crispy_forms_tags %}
 
+{% block css %}
+  {{ filter_form.media.css }}
+{% endblock css %}
+
+{% block js %}
+  {{filter_form.media.js}}
+{% endblock js %}
+
 {% block content %}
 <div class="row">
   <div class="col">
@@ -12,15 +20,15 @@
 </div>
 <hr class="mb-4" />
 <div class="row">
-  <div class="col col-md-4">
-    <form method="post">
+  <div class="col">
+    <form method="post" id="filter_form">
       {% csrf_token %}
-      {% crispy search_form %}
+      {% crispy filter_form %}
     </form>
   </div>
 </div>
-{% if query and papers|length == 0 %}
-  <p>No results for "{{query}}". <a class="btn btn-sm btn-secondary" href="{% url 'research_assistant:all_papers' %}">Clear Search</a></p>
+{% if papers|length == 0 %}
+  <p>No results. <a class="btn btn-sm btn-secondary" href="{% url 'research_assistant:all_papers' %}">Clear Search</a></p>
 {% else %}
   {% if query %}<p>Search results for: "{{query}}": <a class="btn btn-sm btn-secondary" href="{% url 'research_assistant:all_papers' %}">Clear Search</a>{% endif %}
   <ul class="list-group">

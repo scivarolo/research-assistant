@@ -1,6 +1,13 @@
 {% extends 'index.html' %}
 {% load crispy_forms_tags %}
 
+{% block css %}
+  {{ filter_form.media.css }}
+{% endblock css %}
+{% block js %}
+  {{ filter_form.media.js }}
+{% endblock js %}
+
 {% block content %}
 <div class="row">
   <div class="col">
@@ -28,23 +35,23 @@
 <hr class="mb-4">
 
 <div class="row">
-  <div class="col col-md-4">
-    <form method="post">
+  <div class="col">
+    <form method="post" id="filter_form">
       {% csrf_token %}
-      {% crispy search_form %}
+      {% crispy filter_form %}
     </form>
   </div>
 </div>
 
 <div class="row">
   <div class="col">
-  {% if query and list.paper_set.all|length == 0 %}
-    <p>No papers in this list match "{{query}}". <a class="btn btn-sm btn-secondary" href="{% url 'research_assistant:single_list' list.id %}">Clear Search</a></p>
+  {% if papers|length == 0 %}
+    <p>No papers in this list match. <a class="btn btn-sm btn-secondary" href="{% url 'research_assistant:single_list' list.id %}">Clear Search</a></p>
   {% else %}
     {% if query %}<p>Search results for "{{query}}" <a class="btn btn-sm btn-secondary" href="{% url 'research_assistant:single_list' list.id %}">Clear Search</a>{% endif %}
     <ul class="list-group">
-      {% if list.paper_set.all %}
-        {% for paper in list.paper_set.all %}
+      {% if papers %}
+        {% for paper in papers %}
           <a class="list-group-item list-group-item-action" href="{% url 'research_assistant:single_paper' paper.id %}">
             {{ paper.title }}
             {% if not paper.is_read %}<span class="badge badge-danger badge-pill">Unread</span>{% endif %}

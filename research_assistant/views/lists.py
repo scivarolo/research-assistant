@@ -5,9 +5,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 from django.db.models import Prefetch
 
-from research_assistant.forms import ListForm, SearchForm
+from research_assistant.forms import ListForm, SearchForm, PaperFilterForm
 from research_assistant.models import List, Paper
-
+from research_assistant.utils import __filter_papers_query
 
 @login_required
 def all_lists(request):
@@ -39,30 +39,42 @@ def single_list(request, list_id):
     """
 
     the_list = List.objects.get(pk=list_id, user=request.user)
+    papers = Paper.objects.filter(user=request.user, lists__id=list_id)
     template = "lists/single.html"
-    context = {"search_form": SearchForm(placeholder="Search papers within list")}
+    context = {
+        "filter_form": PaperFilterForm(user=request.user, current_list=list_id),
+        "papers": papers
+    }
 
-    # if searching
-    if request.POST.get("query"):
-        query = request.POST["query"]
-        if query is not None:
-            context["query"] = query
-            # Prefetch the papers in the query
-            papers = Paper.objects.filter(title__contains=query, user=request.user)
-            the_list = (
-                List.objects.filter(pk=list_id, user=request.user)
-                .prefetch_related(Prefetch("paper_set", queryset=papers))
-                .get()
-            )
-
-    # if requesting edit
-    elif request.method == "GET" and request.GET.get("edit"):
-        context["edit_list_form"] = ListForm(instance=the_list)
+    # The filter form is being cleared
+    if request.POST.get("clear"):
+        pass
 
     # if saving edit
     elif request.POST.get("name"):
         the_list.name = request.POST["name"]
         the_list.save()
+
+    # Filter the papers within the list
+    elif request.method == "POST":
+        data = request.POST.copy()
+
+        # Build the Paper query with the filters applied
+        filtered_papers = __filter_papers_query(data, request.user)
+        filtered_papers = filtered_papers.filter(lists__id=list_id)
+
+        # the_list = (
+        #     List.objects.filter(pk=list_id, user=request.user)
+        #     .prefetch_related(Prefetch("paper_set", queryset=papers))
+        #     .get()
+        # )
+        context["papers"] = filtered_papers
+        context["filter_form"] = PaperFilterForm(data=data, user=request.user, current_list=list_id)
+
+    # if requesting edit
+    elif request.method == "GET" and request.GET.get("edit"):
+        context["edit_list_form"] = ListForm(instance=the_list)
+
 
     context["list"] = the_list
 

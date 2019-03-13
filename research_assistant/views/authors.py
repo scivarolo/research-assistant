@@ -5,8 +5,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 from django.db.models import Prefetch
 
-from research_assistant.forms import AuthorForm, SearchForm
+from research_assistant.forms import AuthorForm, SearchForm, PaperFilterForm
 from research_assistant.models import Author, Paper
+from research_assistant.utils import __filter_papers_query
 
 
 @login_required
@@ -36,30 +37,33 @@ def single_author(request, author_id):
     Also handles editing the author name when edit button is clicked.
     """
     author = Author.objects.get(pk=author_id, user=request.user)
+    papers = Paper.objects.filter(user=request.user, authors__id=author_id)
     template = "authors/single.html"
-    context = {"search_form": SearchForm(placeholder="Search papers by this author")}
+    context = {
+        "filter_form": PaperFilterForm(user=request.user, current_author=author_id),
+        "papers": papers
+    }
 
-    # if searching
-    if request.POST.get("query"):
-        query = request.POST["query"]
-        if query is not None:
-            context["query"] = query
-            # Prefetch the papers in the query
-            papers = Paper.objects.filter(title__contains=query, user=request.user)
-            author = (
-                Author.objects.filter(pk=author_id, user=request.user)
-                .prefetch_related(Prefetch("paper_set", queryset=papers))
-                .get()
-            )
-
-    # if requestiong edit
-    if request.method == "GET" and request.GET.get("edit"):
-        context["edit_author_form"] = AuthorForm(instance=author)
+    if request.POST.get("clear"):
+        pass
 
     # if saving edit
     elif request.POST.get("name"):
         author.name = request.POST["name"]
         author.save()
+
+    # if filtering papers
+    elif request.method == "POST":
+        data = request.POST.copy()
+        filtered_papers = __filter_papers_query(data, request.user)
+        filtered_papers = filtered_papers.filter(authors__id=author_id)
+
+        context["papers"] = filtered_papers
+        context["filter_form"] = PaperFilterForm(data=data, user=request.user, current_author=author_id)
+
+    # if requesting edit
+    if request.method == "GET" and request.GET.get("edit"):
+        context["edit_author_form"] = AuthorForm(instance=author)
 
     context["author"] = author
 
