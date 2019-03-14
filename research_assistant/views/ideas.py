@@ -1,10 +1,16 @@
 """Defines views for interacting with Ideas"""
 from django.http import HttpResponse
+from django.shortcuts import render, reverse
 
 from research_assistant.models import Idea
 
 def all_ideas(request):
-    return HttpResponse("All Ideas")
+    ideas = Idea.objects.filter(user=request.user)
+    template = "ideas/ideas.html"
+    context = {
+        "ideas": ideas
+    }
+    return render(request, template, context)
 
 
 def single_idea(request):
