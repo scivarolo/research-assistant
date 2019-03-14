@@ -89,3 +89,16 @@ class Note(models.Model):
 
     class Meta:
         ordering = ("-date_modified",)
+
+
+class Idea(models.Model):
+    """Idea model with Tags, Lists, and Papers, as FKs"""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    content = HTMLField()
+    papers = models.ManyToManyField("Paper", blank=True)
+    tags = models.ManyToManyField("Tag", blank=True)
+    lists = models.ManyToManyField("List", blank=True)
+    date_created = models.DateTimeField(default=timezone.now)
+    date_modified = models.DateTimeField(default=timezone.now)
