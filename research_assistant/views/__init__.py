@@ -7,3 +7,4 @@ from .notes import *
 from .lists import *
 from .tags import *
 from .authors import *
+from .ideas import *

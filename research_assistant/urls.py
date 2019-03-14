@@ -35,11 +35,17 @@ urlpatterns = [
     path("lists/<int:list_id>/", views.single_list, name="single_list"),
     path("lists/<int:list_id>/delete/", views.delete_list, name="delete_list"),
     path("lists/new/", views.new_list, name="new_list"),
+    # Idea views
+    path("ideas/", views.all_ideas, name="all_ideas"),
+    path("ideas/<int:idea_id>/", views.single_idea, name="single_idea"),
+    path("ideas/<int:idea_id>/delete/", views.delete_idea, name="delete_idea"),
+    path("ideas/new/", views.new_idea, name="new_idea"),
     # Tag Views
     path("tags/", views.all_tags, name="all_tags"),
     path("tags/<int:tag_id>/", views.single_tag, name="single_tag"),
     path("tags/<int:tag_id>/delete/", views.delete_tag, name="delete_tag"),
     path("tags/new/", views.new_tag, name="new_tag"),
+    # Author views
     path("authors/", views.all_authors, name="all_authors"),
     path("authors/<int:author_id>/", views.single_author, name="single_author"),
     path("authors/<int:author_id>/delete", views.delete_author, name="delete_author"),
