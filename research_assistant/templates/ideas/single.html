@@ -1,0 +1,20 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <div class="row">
+    <div class="col">
+      <h1>{{ idea.title }}</h1>
+      <h4>{{ idea.date_modified }}</h4>
+    </div>
+    <div class="col text-right">
+      <a class="btn btn-primary" href="{% url 'research_assistant:edit_idea' idea.id %}">Edit</a>
+      <a class="btn btn-danger" href="{% url 'research_assistant:delete_idea' idea.id %}">Delete</a>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-9 mb-4">
+      {{idea.content|safe}}
+    </div>
+  </div>
+{% endblock content %}

@@ -75,7 +75,6 @@ def edit_note(request, paper_id, note_id):
         content = form_data["content"]
 
         note = Note.objects.get(pk=note_id)
-        print(note_id)
         note.title = title
         note.content = content
         note.date_modified = timezone.now()

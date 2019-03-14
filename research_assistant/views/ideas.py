@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, reverse
+from django.utils import timezone
 
 from research_assistant.forms import IdeaForm
 from research_assistant.models import Idea
@@ -19,7 +20,38 @@ def all_ideas(request):
 
 @login_required
 def single_idea(request, idea_id):
-    return HttpResponse("Single Idea")
+    idea = Idea.objects.get(pk=idea_id)
+    template = "ideas/single.html"
+    context = {"idea": idea}
+
+    return render(request, template, context)
+
+@login_required
+def edit_idea(request, idea_id):
+
+    if request.method == "POST":
+        form_data = request.POST
+
+        idea = Idea.objects.get(pk=idea_id)
+        idea.title = form_data["title"]
+        idea.content = form_data["content"]
+        idea.date_modified = timezone.now()
+
+        idea.save()
+
+        return HttpResponseRedirect(
+            reverse("research_assistant:single_idea", args=(idea_id,))
+        )
+
+    idea = Idea.objects.get(pk=idea_id)
+    context = {
+        "idea": idea,
+        "edit_idea_form": IdeaForm(instance=idea),
+        "tiny_api_key": settings.TINYMCE_API_KEY,
+    }
+    template = "ideas/form.html"
+
+    return render(request, template, context)
 
 @login_required
 def delete_idea(request):

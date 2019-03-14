@@ -38,6 +38,7 @@ urlpatterns = [
     # Idea views
     path("ideas/", views.all_ideas, name="all_ideas"),
     path("ideas/<int:idea_id>/", views.single_idea, name="single_idea"),
+    path("ideas/<int:idea_id>/edit/", views.edit_idea, name="edit_idea"),
     path("ideas/<int:idea_id>/delete/", views.delete_idea, name="delete_idea"),
     path("ideas/new/", views.new_idea, name="new_idea"),
     # Tag Views

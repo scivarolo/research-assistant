@@ -7,10 +7,19 @@
 {% endblock js_head %}
 
 {% block content %}
-<form method="post">
-  {% csrf_token %}
-  {{ new_idea_form|crispy }}
-  <input type="submit" class="btn btn-primary">
-  <a class="btn btn-secondary" href="{% url 'research_assistant:all_ideas' %}">Cancel</a>
-</form>
+{% if request.resolver_match.kwargs.idea_id %}
+  <form method="post">
+    {% csrf_token %}
+    {{ edit_idea_form|crispy }}
+    <input type="submit" class="btn btn-primary">
+    <a class="btn btn-secondary" href="{% url 'research_assistant:single_idea' idea.id %}">Cancel</a>
+  </form>
+{% else %}
+  <form method="post">
+    {% csrf_token %}
+    {{ new_idea_form|crispy }}
+    <input type="submit" class="btn btn-primary">
+    <a class="btn btn-secondary" href="{% url 'research_assistant:all_ideas' %}">Cancel</a>
+  </form>
+{% endif %}
 {% endblock content %}
