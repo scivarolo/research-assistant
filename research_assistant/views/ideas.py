@@ -54,8 +54,20 @@ def edit_idea(request, idea_id):
     return render(request, template, context)
 
 @login_required
-def delete_idea(request):
-    return HttpResponse("Delete Idea")
+def delete_idea(request, idea_id):
+
+    idea = Idea.objects.get(pk=idea_id)
+    if request.method == "POST":
+        idea.delete()
+
+        return HttpResponseRedirect(
+            reverse("research_assistant:all_ideas")
+        )
+
+    context = {"idea": idea}
+    template = "ideas/delete.html"
+    return render(request, template, context)
+
 
 @login_required
 def new_idea(request):

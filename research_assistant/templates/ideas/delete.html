@@ -1,0 +1,15 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <div class="row">
+    <div class="col">
+      <h3>Are you sure you want to delete {{ idea.title }}?</h3>
+      <p>This will not delete any related items.</p>
+      <form class="d-inline" action="{% url 'research_assistant:delete_idea' request.resolver_match.kwargs.idea_id %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+      </form>
+      <a class="d-inline-block btn btn-primary" href="{% url 'research_assistant:single_idea' request.resolver_match.kwargs.idea_id %}">Cancel</a>
+    </div>
+  </div>
+{% endblock content %}
