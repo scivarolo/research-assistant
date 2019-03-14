@@ -1,0 +1,16 @@
+{% extends 'index.html' %}
+{% load crispy_forms_tags %}
+
+{% block js_head %}
+  <script src="https://cloud.tinymce.com/5/tinymce.min.js?apiKey={{ tiny_api_key }}"></script>
+  <script>tinymce.init({ selector:'textarea' });</script>
+{% endblock js_head %}
+
+{% block content %}
+<form method="post">
+  {% csrf_token %}
+  {{ new_idea_form|crispy }}
+  <input type="submit" class="btn btn-primary">
+  <a class="btn btn-secondary" href="{% url 'research_assistant:all_ideas' %}">Cancel</a>
+</form>
+{% endblock content %}

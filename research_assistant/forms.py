@@ -9,7 +9,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django_select2.forms import Select2MultipleWidget, Select2Widget
 
-from .models import Author, Journal, List, Note, Paper, Tag
+from .models import Author, Journal, List, Note, Paper, Tag, Idea
 
 
 class UserForm(forms.ModelForm):
@@ -94,6 +94,14 @@ class AuthorForm(forms.ModelForm):
     class Meta:
         model = Author
         fields = ("name",)
+
+
+class IdeaForm(forms.ModelForm):
+    """Form for creating new ideas and editing existing ideas"""
+
+    class Meta:
+        model = Idea
+        fields = ("title", "content")
 
 
 class SearchForm(forms.Form):
