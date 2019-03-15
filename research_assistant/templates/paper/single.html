@@ -62,7 +62,7 @@
       <h5>Authors</h5>
       <ul>
       {% for author in paper.authors.all %}
-        <li>{{ author.name }}</li>
+        <li><a href="{% url 'research_assistant:single_author' author.id %}">{{ author.name }}</li>
       {% endfor %}
       </ul>
       {% endif %}
